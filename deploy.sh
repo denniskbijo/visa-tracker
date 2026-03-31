@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Deploy visa-tracker to Oracle Cloud ARM VM.
+# Deploy visa-tracker to an Oracle Cloud VM.
 # Usage: ./deploy.sh <VM_IP> [SSH_USER]
 #
 # Prerequisites:
@@ -12,11 +12,11 @@ HOST="${1:?Usage: ./deploy.sh <VM_IP> [SSH_USER]}"
 USER="${2:-opc}"
 REMOTE_DIR="/opt/visa-tracker"
 
-echo "==> Cross-compiling for linux/arm64..."
-GOOS=linux GOARCH=arm64 go build -o visa-tracker-arm64 ./cmd/server
+echo "==> Cross-compiling for linux/amd64..."
+GOOS=linux GOARCH=amd64 go build -o visa-tracker-linux ./cmd/server
 
 echo "==> Uploading to ${USER}@${HOST}:${REMOTE_DIR}..."
-scp visa-tracker-arm64 "${USER}@${HOST}:${REMOTE_DIR}/visa-tracker"
+scp visa-tracker-linux "${USER}@${HOST}:${REMOTE_DIR}/visa-tracker"
 scp -r data/ "${USER}@${HOST}:${REMOTE_DIR}/data/"
 scp -r static/ "${USER}@${HOST}:${REMOTE_DIR}/static/"
 ssh "${USER}@${HOST}" "mkdir -p ${REMOTE_DIR}/internal"
@@ -29,4 +29,4 @@ echo "==> Checking service status..."
 ssh "${USER}@${HOST}" "sudo systemctl is-active visa-tracker"
 
 echo "==> Deployed successfully."
-rm -f visa-tracker-arm64
+rm -f visa-tracker-linux

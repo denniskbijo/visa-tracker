@@ -15,8 +15,8 @@ jobs:
         with:
           go-version-file: go.mod
 
-      - name: Build ARM64 binary
-        run: GOOS=linux GOARCH=arm64 go build -o visa-tracker ./cmd/server
+      - name: Build amd64 binary
+        run: GOOS=linux GOARCH=amd64 go build -o visa-tracker ./cmd/server
 
       - name: Deploy files to VM
         uses: appleboy/scp-action@v0.1.7

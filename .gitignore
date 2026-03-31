@@ -4,6 +4,7 @@
 *.sqlite
 visa-tracker
 visa-tracker-arm64
+visa-tracker-linux
 server
 /tmp/
 *.tar.gz

@@ -12,6 +12,7 @@ import (
 )
 
 const maxSponsorCSVSize = 50 * 1024 * 1024 // 50 MB sanity limit
+const insertBatchSize = 2000
 
 func (ing *Ingester) RefreshSponsors() error {
 	url := ing.cfg.SponsorCSVURL
@@ -32,44 +33,25 @@ func (ing *Ingester) RefreshSponsors() error {
 	}
 
 	limitedBody := io.LimitReader(resp.Body, maxSponsorCSVSize)
-	sponsors, err := parseSponsorsCSV(limitedBody)
+	total, err := ing.streamSponsorsCSV(limitedBody)
 	if err != nil {
-		return fmt.Errorf("parse sponsors CSV: %w", err)
+		return fmt.Errorf("stream sponsors CSV: %w", err)
 	}
 
-	if len(sponsors) < 1000 {
-		return fmt.Errorf("suspiciously few sponsors (%d), aborting to protect existing data", len(sponsors))
-	}
-
-	log.Printf("parsed %d sponsors, loading into database", len(sponsors))
-
-	if err := ing.db.ClearSponsors(); err != nil {
-		return fmt.Errorf("clear sponsors: %w", err)
-	}
-
-	const batchSize = 5000
-	for i := 0; i < len(sponsors); i += batchSize {
-		end := i + batchSize
-		if end > len(sponsors) {
-			end = len(sponsors)
-		}
-		if err := ing.db.BulkInsertSponsors(sponsors[i:end]); err != nil {
-			return fmt.Errorf("bulk insert sponsors batch %d: %w", i/batchSize, err)
-		}
-	}
-
-	log.Printf("loaded %d sponsors into database", len(sponsors))
+	log.Printf("loaded %d sponsors into database", total)
 	return nil
 }
 
-func parseSponsorsCSV(r io.Reader) ([]models.Sponsor, error) {
+// streamSponsorsCSV reads the CSV row-by-row, inserting in batches to
+// keep memory usage constant regardless of file size.
+func (ing *Ingester) streamSponsorsCSV(r io.Reader) (int, error) {
 	reader := csv.NewReader(r)
 	reader.LazyQuotes = true
 	reader.TrimLeadingSpace = true
 
 	header, err := reader.Read()
 	if err != nil {
-		return nil, fmt.Errorf("read header: %w", err)
+		return 0, fmt.Errorf("read header: %w", err)
 	}
 
 	colIdx := make(map[string]int)
@@ -84,7 +66,13 @@ func parseSponsorsCSV(r io.Reader) ([]models.Sponsor, error) {
 	ratingIdx := findCol(colIdx, "rating", "type & rating")
 	subIdx := findCol(colIdx, "sub rating")
 
-	var sponsors []models.Sponsor
+	if err := ing.db.ClearSponsors(); err != nil {
+		return 0, fmt.Errorf("clear sponsors: %w", err)
+	}
+
+	batch := make([]models.Sponsor, 0, insertBatchSize)
+	total := 0
+
 	for {
 		record, err := reader.Read()
 		if err == io.EOF {
@@ -106,10 +94,29 @@ func parseSponsorsCSV(r io.Reader) ([]models.Sponsor, error) {
 		if s.Name == "" {
 			continue
 		}
-		sponsors = append(sponsors, s)
+
+		batch = append(batch, s)
+		if len(batch) >= insertBatchSize {
+			if err := ing.db.BulkInsertSponsors(batch); err != nil {
+				return total, fmt.Errorf("bulk insert at row %d: %w", total, err)
+			}
+			total += len(batch)
+			batch = batch[:0]
+		}
 	}
 
-	return sponsors, nil
+	if len(batch) > 0 {
+		if err := ing.db.BulkInsertSponsors(batch); err != nil {
+			return total, fmt.Errorf("bulk insert final batch: %w", err)
+		}
+		total += len(batch)
+	}
+
+	if total < 1000 {
+		return total, fmt.Errorf("suspiciously few sponsors (%d), data may be corrupted", total)
+	}
+
+	return total, nil
 }
 
 func findCol(idx map[string]int, names ...string) int {
