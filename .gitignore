@@ -3,6 +3,7 @@
 *.db-wal
 *.sqlite
 visa-tracker
+visa-tracker-arm64
 server
 /tmp/
 *.tar.gz
