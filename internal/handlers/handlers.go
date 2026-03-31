@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/denniskbijo/visa-tracker/internal/config"
 	"github.com/denniskbijo/visa-tracker/internal/models"
@@ -13,9 +14,10 @@ import (
 )
 
 type Handler struct {
-	db   *store.DB
-	cfg  *config.Config
-	tmpl map[string]*template.Template
+	db      *store.DB
+	cfg     *config.Config
+	tmpl    map[string]*template.Template
+	apiRate *rateLimiter
 }
 
 var funcMap = template.FuncMap{
@@ -25,9 +27,18 @@ var funcMap = template.FuncMap{
 }
 
 func New(db *store.DB, cfg *config.Config) *Handler {
-	h := &Handler{db: db, cfg: cfg}
+	h := &Handler{
+		db:      db,
+		cfg:     cfg,
+		apiRate: newRateLimiter(60, time.Minute),
+	}
 	h.loadTemplates()
 	return h
+}
+
+// Wrapped returns the mux wrapped in security headers middleware.
+func (h *Handler) Wrapped(mux *http.ServeMux) http.Handler {
+	return securityHeaders(mux)
 }
 
 func (h *Handler) Register(mux *http.ServeMux) {
@@ -41,9 +52,9 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("/soc", h.handleSOC)
 	mux.HandleFunc("/soc/results", h.handleSOCResults)
 
-	mux.HandleFunc("/api/v1/visas", h.handleAPIVisas)
-	mux.HandleFunc("/api/v1/sponsors", h.handleAPISponsors)
-	mux.HandleFunc("/api/v1/soc", h.handleAPISOC)
+	mux.HandleFunc("/api/v1/visas", h.apiRate.middleware(h.handleAPIVisas))
+	mux.HandleFunc("/api/v1/sponsors", h.apiRate.middleware(h.handleAPISponsors))
+	mux.HandleFunc("/api/v1/soc", h.apiRate.middleware(h.handleAPISOC))
 }
 
 func (h *Handler) loadTemplates() {
