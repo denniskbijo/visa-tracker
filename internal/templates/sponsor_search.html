@@ -1,0 +1,30 @@
+{{define "content"}}
+<div class="card" style="margin-bottom:16px">
+  <div class="card-header">
+    <div class="card-title">// LICENSED SPONSOR SEARCH</div>
+    <div class="card-badge">{{.TotalSponsors}} employers</div>
+  </div>
+
+  <form class="search-box" hx-get="/sponsors/results" hx-target="#sponsor-results" hx-trigger="submit" hx-indicator="#sponsor-loading">
+    <input type="text" name="q" class="search-input" placeholder="search company name..." value="{{.Query}}" />
+    <select name="route" class="search-select">
+      <option value="">all routes</option>
+      <option value="Skilled Worker" {{if eq .RouteFilter "Skilled Worker"}}selected{{end}}>Skilled Worker</option>
+      <option value="Intra-Company" {{if eq .RouteFilter "Intra-Company"}}selected{{end}}>Intra-Company</option>
+      <option value="Scale-up" {{if eq .RouteFilter "Scale-up"}}selected{{end}}>Scale-up</option>
+    </select>
+    <select name="city" class="search-select">
+      <option value="">all cities</option>
+      {{range .Cities}}
+      <option value="{{.}}" {{if eq . $.CityFilter}}selected{{end}}>{{.}}</option>
+      {{end}}
+    </select>
+    <button type="submit" class="btn-primary">search</button>
+  </form>
+  <div id="sponsor-loading" class="htmx-indicator">searching sponsors...</div>
+</div>
+
+<div id="sponsor-results">
+  {{template "sponsor_results" .Results}}
+</div>
+{{end}}

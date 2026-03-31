@@ -1,0 +1,102 @@
+soc_codes:
+  - code: "2133"
+    title: "IT specialist managers"
+    description: "Plan, organise and co-ordinate the operations of IT systems and infrastructure."
+    going_rate_pence: 4500000
+    on_immigration_salary_list: false
+
+  - code: "2134"
+    title: "IT project and programme managers"
+    description: "Plan and oversee IT projects, managing budgets, timelines and resources."
+    going_rate_pence: 4100000
+    on_immigration_salary_list: false
+
+  - code: "2135"
+    title: "IT business analysts, architects and systems designers"
+    description: "Analyse business requirements and design IT solutions and system architectures."
+    going_rate_pence: 3870000
+    on_immigration_salary_list: false
+
+  - code: "2136"
+    title: "Programmers and software development professionals"
+    description: "Design, write, test and maintain software programs and applications."
+    going_rate_pence: 4000000
+    on_immigration_salary_list: false
+
+  - code: "2137"
+    title: "Web design professionals"
+    description: "Design and build websites and web applications using front-end and back-end technologies."
+    going_rate_pence: 3870000
+    on_immigration_salary_list: false
+
+  - code: "2139"
+    title: "Information technology professionals n.e.c."
+    description: "IT professionals not elsewhere classified, including cyber security analysts, DevOps engineers, data engineers, and cloud specialists."
+    going_rate_pence: 3870000
+    on_immigration_salary_list: true
+
+  - code: "2425"
+    title: "Actuaries, economists and statisticians"
+    description: "Compile and analyse data, apply mathematical and statistical techniques."
+    going_rate_pence: 4100000
+    on_immigration_salary_list: false
+
+  - code: "2126"
+    title: "Design and development engineers"
+    description: "Research and develop new products, equipment and processes."
+    going_rate_pence: 3870000
+    on_immigration_salary_list: false
+
+  - code: "2127"
+    title: "Production and process engineers"
+    description: "Plan and design production processes and oversee manufacturing systems."
+    going_rate_pence: 3870000
+    on_immigration_salary_list: false
+
+  - code: "2129"
+    title: "Engineering professionals n.e.c."
+    description: "Engineering professionals not elsewhere classified."
+    going_rate_pence: 3870000
+    on_immigration_salary_list: false
+
+  - code: "2142"
+    title: "Environment professionals"
+    description: "Study, advise and report on effects of human activity on the environment."
+    going_rate_pence: 3870000
+    on_immigration_salary_list: false
+
+  - code: "2150"
+    title: "Research and development managers"
+    description: "Plan, direct and co-ordinate R&D activities in science, engineering and technology."
+    going_rate_pence: 4500000
+    on_immigration_salary_list: false
+
+  - code: "2311"
+    title: "Higher education teaching professionals"
+    description: "Teach and research at university level in STEM and other subjects."
+    going_rate_pence: 3870000
+    on_immigration_salary_list: false
+
+  - code: "2162"
+    title: "Other researchers, unspecified discipline"
+    description: "Conduct research across disciplines not elsewhere classified."
+    going_rate_pence: 3870000
+    on_immigration_salary_list: false
+
+  - code: "2461"
+    title: "Quality control and planning engineers"
+    description: "Establish standards, procedures and test methods for quality assurance."
+    going_rate_pence: 3870000
+    on_immigration_salary_list: false
+
+  - code: "3131"
+    title: "IT operations technicians"
+    description: "Provide technical support for IT systems, networks and infrastructure."
+    going_rate_pence: 3100000
+    on_immigration_salary_list: false
+
+  - code: "3132"
+    title: "IT user support technicians"
+    description: "Provide help-desk and technical support to IT users."
+    going_rate_pence: 2660000
+    on_immigration_salary_list: false

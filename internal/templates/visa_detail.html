@@ -1,0 +1,64 @@
+{{define "content"}}
+<div class="card" style="margin-bottom:16px">
+  <div class="card-header">
+    <div class="card-title">// {{upper .Route.Name}}</div>
+    <div>
+      {{if .Route.RequiresSponsor}}<span class="tag tag-blue">sponsor required</span>{{end}}
+      {{if .Route.RequiresEndorsement}}<span class="tag tag-amber">endorsement required</span>{{end}}
+      {{if not .Route.RequiresSponsor}}{{if not .Route.RequiresEndorsement}}<span class="tag tag-green">no sponsor needed</span>{{end}}{{end}}
+    </div>
+  </div>
+  <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;margin-bottom:20px">{{.Route.Description}}</p>
+
+  <div class="section-row">
+    <div class="detail-item">
+      <div class="di-label">SALARY THRESHOLD</div>
+      <div class="di-value green">{{.Route.ThresholdPounds}} / yr</div>
+    </div>
+    <div class="detail-item">
+      <div class="di-label">VISA DURATION</div>
+      <div class="di-value">{{printf "%.0f" .Route.DurationYears}} years</div>
+    </div>
+  </div>
+
+  {{if .ProcessingTime}}
+  <div class="threshold-box" style="margin-top:16px">
+    <div class="th-label">// PROCESSING TIME</div>
+    <div class="th-value">{{.ProcessingTime.MedianDays}} days median</div>
+    <div class="th-sub">90th percentile: {{.ProcessingTime.P90Days}} days · snapshot {{.ProcessingTime.SnapshotDate}}</div>
+  </div>
+  {{end}}
+</div>
+
+{{if .Thresholds}}
+<div class="card" style="margin-bottom:16px">
+  <div class="card-header">
+    <div class="card-title">// SALARY THRESHOLD HISTORY</div>
+  </div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>EFFECTIVE DATE</th>
+        <th>SOC CODE</th>
+        <th>AMOUNT</th>
+        <th>NOTES</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .Thresholds}}
+      <tr>
+        <td class="mono">{{.EffectiveDate}}</td>
+        <td class="mono">{{if .SOCCode}}{{.SOCCode}}{{else}}General{{end}}</td>
+        <td class="mono green">{{.AmountPounds}}</td>
+        <td>{{.Notes}}</td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+</div>
+{{end}}
+
+<div style="margin-top:12px">
+  <a href="/visas" class="btn-outline">← all visa routes</a>
+</div>
+{{end}}

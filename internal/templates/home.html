@@ -1,0 +1,63 @@
+{{define "content"}}
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-tag">// OPEN SOURCE · UK VISA TRACKER</div>
+  <h1>Track your path to a<br><em>UK tech visa</em></h1>
+  <p>Real-time salary thresholds, 60k+ licensed sponsors, SOC code lookups — all from official gov.uk data. Built for tech and STEM professionals of any nationality.</p>
+  <div class="hero-actions">
+    <a href="/visas" class="btn-primary">visa dashboard</a>
+    <a href="/sponsors" class="btn-outline">search sponsors →</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item"><div class="num">{{.RouteCount}}</div><div class="lbl">Visa routes tracked</div></div>
+    <div class="stat-item"><div class="num">{{.SponsorCount}}</div><div class="lbl">Licensed sponsors</div></div>
+    <div class="stat-item"><div class="num">{{.SOCCount}}</div><div class="lbl">SOC codes</div></div>
+  </div>
+</div>
+
+<div class="section-row">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">// VISA ROUTES</div>
+      <div class="card-badge">live</div>
+    </div>
+    <div class="visa-bars">
+      {{range .Routes}}
+      <div class="visa-row">
+        <div class="visa-label"><a href="/visas/{{.Slug}}">{{.Name}}</a></div>
+        <div class="bar-track"><div class="bar-fill" style="width:{{threshold_bar .SalaryThreshold}}%;background:{{route_color .Slug}};"></div></div>
+        <div class="bar-pct">{{.ThresholdPounds}}</div>
+      </div>
+      {{end}}
+    </div>
+    <div class="threshold-box">
+      <div class="th-label">// SKILLED WORKER THRESHOLD</div>
+      <div class="th-value">£38,700 / yr</div>
+      <div class="th-sub">General threshold · effective Apr 2024</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">// QUICK LINKS</div>
+    </div>
+    <div class="detail-grid">
+      <a href="/sponsors" class="detail-item" style="text-decoration:none">
+        <div class="di-label">SPONSOR SEARCH</div>
+        <div class="di-value green">{{.SponsorCount}} licensed employers</div>
+        <div class="di-note">Search by company name, city, or visa route</div>
+      </a>
+      <a href="/soc" class="detail-item" style="text-decoration:none">
+        <div class="di-label">SOC CODE LOOKUP</div>
+        <div class="di-value green">{{.SOCCount}} tech/STEM codes</div>
+        <div class="di-note">Find your occupation code and going-rate salary</div>
+      </a>
+      <a href="/api/v1/visas" class="detail-item" style="text-decoration:none">
+        <div class="di-label">JSON API</div>
+        <div class="di-value green">/api/v1/*</div>
+        <div class="di-note">Programmatic access to all visa data</div>
+      </a>
+    </div>
+  </div>
+</div>
+{{end}}

@@ -1,0 +1,36 @@
+{{define "sponsor_results"}}
+{{if .Sponsors}}
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">// RESULTS</div>
+    <div class="card-badge">{{.Total}} found</div>
+  </div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>ORGANISATION</th>
+        <th>CITY</th>
+        <th>ROUTE</th>
+        <th>RATING</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .Sponsors}}
+      <tr>
+        <td>{{.Name}}</td>
+        <td class="mono">{{.City}}</td>
+        <td><span class="tag tag-blue">{{.Route}}</span></td>
+        <td class="mono">{{.Rating}}</td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+</div>
+{{else}}
+<div class="card">
+  <p style="color:var(--text-secondary);font-size:13px;padding:20px 0;text-align:center">
+    {{if .Query}}No sponsors found for "{{.Query}}"{{else}}Enter a search term to find licensed sponsors{{end}}
+  </p>
+</div>
+{{end}}
+{{end}}

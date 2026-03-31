@@ -1,0 +1,36 @@
+{{define "soc_results"}}
+<div class="card">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>SOC CODE</th>
+        <th>TITLE</th>
+        <th>GOING RATE</th>
+        <th>ISL</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .Codes}}
+      <tr>
+        <td class="mono green">{{.Code}}</td>
+        <td>
+          {{.Title}}
+          <div style="font-size:11px;color:var(--text-hint);margin-top:2px">{{.Description}}</div>
+        </td>
+        <td class="mono green">{{.GoingRatePounds}} /yr</td>
+        <td>
+          {{if .OnImmigrationSalaryList}}<span class="tag tag-green">yes</span>{{else}}<span class="tag">no</span>{{end}}
+        </td>
+      </tr>
+      {{end}}
+      {{if not .Codes}}
+      <tr>
+        <td colspan="4" style="text-align:center;color:var(--text-secondary);padding:20px">
+          {{if .Query}}No SOC codes found for "{{.Query}}"{{else}}All tech/STEM SOC codes are shown below{{end}}
+        </td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+</div>
+{{end}}

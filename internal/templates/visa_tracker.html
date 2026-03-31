@@ -1,0 +1,51 @@
+{{define "content"}}
+<div class="card card-full" style="margin-bottom:16px">
+  <div class="card-header">
+    <div class="card-title">// VISA ROUTE DASHBOARD</div>
+    <div class="card-badge">{{len .Routes}} routes</div>
+  </div>
+  <div class="visa-bars">
+    {{range .Routes}}
+    <div class="visa-row">
+      <div class="visa-label"><a href="/visas/{{.Slug}}">{{.Name}}</a></div>
+      <div class="bar-track"><div class="bar-fill" style="width:{{threshold_bar .SalaryThreshold}}%;background:{{route_color .Slug}};"></div></div>
+      <div class="bar-pct">{{.ThresholdPounds}}</div>
+    </div>
+    {{end}}
+  </div>
+</div>
+
+<div class="section-row">
+  {{range .RoutesWithDetails}}
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">// {{upper .Route.Name}}</div>
+      {{if .Route.RequiresSponsor}}<span class="tag tag-blue">sponsor required</span>{{end}}
+      {{if .Route.RequiresEndorsement}}<span class="tag tag-amber">endorsement required</span>{{end}}
+      {{if not .Route.RequiresSponsor}}{{if not .Route.RequiresEndorsement}}<span class="tag tag-green">no sponsor needed</span>{{end}}{{end}}
+    </div>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px;line-height:1.6">{{.Route.Description}}</p>
+    <div class="detail-grid">
+      <div class="detail-item">
+        <div class="di-label">SALARY THRESHOLD</div>
+        <div class="di-value green">{{.Route.ThresholdPounds}} / yr</div>
+      </div>
+      <div class="detail-item">
+        <div class="di-label">DURATION</div>
+        <div class="di-value">{{printf "%.0f" .Route.DurationYears}} years</div>
+      </div>
+      {{if .ProcessingTime}}
+      <div class="detail-item">
+        <div class="di-label">PROCESSING TIME</div>
+        <div class="di-value">{{.ProcessingTime.MedianDays}}d median · {{.ProcessingTime.P90Days}}d (90th %ile)</div>
+        <div class="di-note">snapshot: {{.ProcessingTime.SnapshotDate}}</div>
+      </div>
+      {{end}}
+    </div>
+    <div style="margin-top:12px">
+      <a href="/visas/{{.Route.Slug}}" class="btn-outline" style="font-size:11px;padding:6px 14px">details →</a>
+    </div>
+  </div>
+  {{end}}
+</div>
+{{end}}

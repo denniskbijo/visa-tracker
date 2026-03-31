@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{{if .Title}}{{.Title}} — {{end}}UK Visa Tracker</title>
+<link rel="stylesheet" href="/static/style.css" />
+<script src="/static/htmx.min.js" defer></script>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="nav">
+    <a href="/" style="text-decoration:none">
+      <div class="logo">VISA-TRACKER
+        <span>Open-source UK tech/STEM visa tool</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/" {{if eq .ActiveNav "home"}}class="active"{{end}}>Home</a>
+      <a href="/visas" {{if eq .ActiveNav "visas"}}class="active"{{end}}>Visa tracker</a>
+      <a href="/sponsors" {{if eq .ActiveNav "sponsors"}}class="active"{{end}}>Sponsors</a>
+      <a href="/soc" {{if eq .ActiveNav "soc"}}class="active"{{end}}>SOC codes</a>
+    </div>
+  </nav>
+
+  {{template "content" .}}
+
+  <div class="footer">
+    open-source · <a href="https://github.com/denniskbijo/visa-tracker" target="_blank">github</a> · data from gov.uk
+  </div>
+
+</div>
+</body>
+</html>

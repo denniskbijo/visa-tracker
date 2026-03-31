@@ -1,0 +1,147 @@
+visa_routes:
+  - slug: skilled-worker
+    name: Skilled Worker
+    description: >
+      The main work visa route. Requires a licensed sponsor, a job offer in an eligible
+      SOC code, and a salary meeting the general or going-rate threshold.
+    requires_sponsor: true
+    requires_endorsement: false
+    salary_threshold_pence: 3870000   # £38,700/yr general threshold
+    duration_years: 5
+
+  - slug: global-talent
+    name: Global Talent
+    description: >
+      For leaders and emerging talent in tech, science, engineering, arts, and humanities.
+      Requires endorsement from a designated body (e.g. Tech Nation, UKRI). No sponsor
+      or salary floor needed.
+    requires_sponsor: false
+    requires_endorsement: true
+    salary_threshold_pence: 0
+    duration_years: 5
+
+  - slug: high-potential-individual
+    name: High Potential Individual
+    description: >
+      For graduates of top global universities (as listed by the Home Office). Two-year
+      visa with no sponsor required. Cannot be extended — switch to another route.
+    requires_sponsor: false
+    requires_endorsement: false
+    salary_threshold_pence: 0
+    duration_years: 2
+
+  - slug: scale-up
+    name: Scale-up
+    description: >
+      For workers joining qualifying high-growth companies. Requires sponsor for the first
+      6 months, then free to change employers. Salary threshold £36,300/yr.
+    requires_sponsor: true
+    requires_endorsement: false
+    salary_threshold_pence: 3630000   # £36,300/yr
+    duration_years: 2
+
+  - slug: intra-company-transfer
+    name: Senior or Specialist Worker (ICT)
+    description: >
+      For multinational companies transferring established employees to a UK branch.
+      Requires sponsor and a minimum salary. Previously called Intra-Company Transfer.
+    requires_sponsor: true
+    requires_endorsement: false
+    salary_threshold_pence: 4820000   # £48,200/yr
+    duration_years: 5
+
+  - slug: graduate
+    name: Graduate
+    description: >
+      Two-year post-study work visa for graduates of UK universities. No sponsor needed,
+      no salary threshold, no job offer required. Often used as a bridge to Skilled Worker.
+    requires_sponsor: false
+    requires_endorsement: false
+    salary_threshold_pence: 0
+    duration_years: 2
+
+thresholds:
+  - visa_route_slug: skilled-worker
+    soc_code: ""
+    amount_pence: 3870000
+    effective_date: "2024-04-04"
+    notes: "General threshold raised from £26,200 to £38,700"
+
+  - visa_route_slug: skilled-worker
+    soc_code: "2133"
+    amount_pence: 4500000
+    effective_date: "2024-04-04"
+    notes: "Going rate for IT specialist managers"
+
+  - visa_route_slug: skilled-worker
+    soc_code: "2134"
+    amount_pence: 4100000
+    effective_date: "2024-04-04"
+    notes: "Going rate for IT project and programme managers"
+
+  - visa_route_slug: skilled-worker
+    soc_code: "2135"
+    amount_pence: 3870000
+    effective_date: "2024-04-04"
+    notes: "Going rate for IT business analysts, architects and systems designers"
+
+  - visa_route_slug: skilled-worker
+    soc_code: "2136"
+    amount_pence: 4000000
+    effective_date: "2024-04-04"
+    notes: "Going rate for programmers and software development professionals"
+
+  - visa_route_slug: skilled-worker
+    soc_code: "2137"
+    amount_pence: 3870000
+    effective_date: "2024-04-04"
+    notes: "Going rate for web design professionals"
+
+  - visa_route_slug: skilled-worker
+    soc_code: "2139"
+    amount_pence: 3870000
+    effective_date: "2024-04-04"
+    notes: "Going rate for IT professionals NEC (includes cyber security)"
+
+  - visa_route_slug: scale-up
+    soc_code: ""
+    amount_pence: 3630000
+    effective_date: "2024-04-04"
+    notes: "Scale-up general threshold"
+
+  - visa_route_slug: intra-company-transfer
+    soc_code: ""
+    amount_pence: 4820000
+    effective_date: "2024-04-04"
+    notes: "Senior or Specialist Worker threshold"
+
+processing_times:
+  - visa_route_slug: skilled-worker
+    median_days: 15
+    p90_days: 40
+    snapshot_date: "2025-03-01"
+
+  - visa_route_slug: global-talent
+    median_days: 28
+    p90_days: 56
+    snapshot_date: "2025-03-01"
+
+  - visa_route_slug: high-potential-individual
+    median_days: 10
+    p90_days: 21
+    snapshot_date: "2025-03-01"
+
+  - visa_route_slug: scale-up
+    median_days: 15
+    p90_days: 35
+    snapshot_date: "2025-03-01"
+
+  - visa_route_slug: intra-company-transfer
+    median_days: 15
+    p90_days: 42
+    snapshot_date: "2025-03-01"
+
+  - visa_route_slug: graduate
+    median_days: 10
+    p90_days: 28
+    snapshot_date: "2025-03-01"

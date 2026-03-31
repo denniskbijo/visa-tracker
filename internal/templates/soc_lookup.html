@@ -1,0 +1,18 @@
+{{define "content"}}
+<div class="card" style="margin-bottom:16px">
+  <div class="card-header">
+    <div class="card-title">// SOC CODE LOOKUP</div>
+    <div class="card-badge">{{len .AllCodes}} codes</div>
+  </div>
+
+  <form class="search-box" hx-get="/soc/results" hx-target="#soc-results" hx-trigger="submit" hx-indicator="#soc-loading">
+    <input type="text" name="q" class="search-input" placeholder="search by job title or SOC code..." value="{{.Query}}" />
+    <button type="submit" class="btn-primary">search</button>
+  </form>
+  <div id="soc-loading" class="htmx-indicator">searching SOC codes...</div>
+</div>
+
+<div id="soc-results">
+  {{template "soc_results" .}}
+</div>
+{{end}}

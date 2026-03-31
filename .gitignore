@@ -1,0 +1,9 @@
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+visa-tracker
+server
+/tmp/
+*.tar.gz
+.env
