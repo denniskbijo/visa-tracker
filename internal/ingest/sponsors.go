@@ -11,10 +11,17 @@ import (
 	"github.com/denniskbijo/visa-tracker/internal/models"
 )
 
-func (ing *Ingester) RefreshSponsors() error {
-	log.Printf("downloading sponsor list from %s", ing.cfg.SponsorCSVURL)
+const maxSponsorCSVSize = 50 * 1024 * 1024 // 50 MB sanity limit
 
-	resp, err := http.Get(ing.cfg.SponsorCSVURL)
+func (ing *Ingester) RefreshSponsors() error {
+	url := ing.cfg.SponsorCSVURL
+	if !strings.HasPrefix(url, "https://") {
+		return fmt.Errorf("sponsor CSV URL must use HTTPS, got: %s", url)
+	}
+
+	log.Printf("downloading sponsor list from %s", url)
+
+	resp, err := http.Get(url)
 	if err != nil {
 		return fmt.Errorf("download sponsors CSV: %w", err)
 	}
@@ -24,9 +31,14 @@ func (ing *Ingester) RefreshSponsors() error {
 		return fmt.Errorf("unexpected status %d from sponsor CSV", resp.StatusCode)
 	}
 
-	sponsors, err := parseSponsorsCSV(resp.Body)
+	limitedBody := io.LimitReader(resp.Body, maxSponsorCSVSize)
+	sponsors, err := parseSponsorsCSV(limitedBody)
 	if err != nil {
 		return fmt.Errorf("parse sponsors CSV: %w", err)
+	}
+
+	if len(sponsors) < 1000 {
+		return fmt.Errorf("suspiciously few sponsors (%d), aborting to protect existing data", len(sponsors))
 	}
 
 	log.Printf("parsed %d sponsors, loading into database", len(sponsors))
