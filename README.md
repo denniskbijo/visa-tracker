@@ -29,6 +29,8 @@ Open http://localhost:8080. On first launch the server will:
 2. Load 6 visa routes, salary thresholds, and 17 SOC codes from YAML seed data
 3. Download the latest licensed sponsors CSV from gov.uk (~140k records)
 
+For a **step-by-step local run checklist** (ports, curl checks, reset DB), see [LOCAL.md](LOCAL.md).
+
 ### Docker
 
 ```bash
