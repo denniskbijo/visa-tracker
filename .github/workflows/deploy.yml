@@ -18,6 +18,14 @@ jobs:
       - name: Build amd64 binary
         run: GOOS=linux GOARCH=amd64 go build -o visa-tracker ./cmd/server
 
+      - name: Stop service before replacing binary
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.OCI_HOST }}
+          username: ${{ secrets.OCI_USER }}
+          key: ${{ secrets.OCI_SSH_KEY }}
+          script: sudo systemctl stop visa-tracker || true
+
       - name: Deploy files to VM
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -28,13 +36,13 @@ jobs:
           target: /opt/visa-tracker
           overwrite: true
 
-      - name: Restart service
+      - name: Start service
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.OCI_HOST }}
           username: ${{ secrets.OCI_USER }}
           key: ${{ secrets.OCI_SSH_KEY }}
           script: |
-            sudo systemctl restart visa-tracker
+            sudo systemctl start visa-tracker
             sleep 3
             sudo systemctl is-active visa-tracker
