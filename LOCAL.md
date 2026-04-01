@@ -115,7 +115,7 @@ go run ./cmd/server
 | `PORT` | `8080` | HTTP listen port |
 | `DB_PATH` | `visa-tracker.db` | SQLite file path |
 | `DATA_DIR` | `data` | YAML seed data directory |
-| `SPONSOR_CSV_URL` | gov.uk URL | Sponsor CSV (override for testing) |
+| `SPONSOR_CSV_URL` | gov.uk URL | Must use host `assets.publishing.service.gov.uk` |
 | `REFRESH_INTERVAL_HOURS` | `24` | Hours between sponsor refreshes |
 
 Example:

@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/denniskbijo/visa-tracker/internal/fsutil"
 )
 
 // MigrateFromDir runs each *.sql file in dir once, in name order.
@@ -46,8 +47,7 @@ func (db *DB) MigrateFromDir(dir string) error {
 			continue
 		}
 
-		path := filepath.Join(dir, e.Name())
-		data, err := os.ReadFile(path)
+		data, err := fsutil.ReadFileUnderRoot(dir, e.Name())
 		if err != nil {
 			return fmt.Errorf("read migration %s: %w", e.Name(), err)
 		}

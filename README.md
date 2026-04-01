@@ -47,7 +47,7 @@ All settings via environment variables:
 | `PORT` | `8080` | HTTP server port |
 | `DB_PATH` | `visa-tracker.db` | SQLite database path |
 | `DATA_DIR` | `data` | YAML seed data directory |
-| `SPONSOR_CSV_URL` | *(gov.uk latest)* | Licensed sponsors CSV URL |
+| `SPONSOR_CSV_URL` | *(gov.uk latest)* | Licensed sponsors CSV; host must be `assets.publishing.service.gov.uk` |
 | `REFRESH_INTERVAL_HOURS` | `24` | Hours between sponsor refreshes |
 
 ## Project Layout

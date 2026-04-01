@@ -1,12 +1,15 @@
 package ingest
 
 import (
+	"context"
 	"encoding/csv"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
+	"time"
 
 	"github.com/denniskbijo/visa-tracker/internal/models"
 )
@@ -15,14 +18,23 @@ const maxSponsorCSVSize = 50 * 1024 * 1024 // 50 MB sanity limit
 const insertBatchSize = 2000
 
 func (ing *Ingester) RefreshSponsors() error {
-	url := ing.cfg.SponsorCSVURL
-	if !strings.HasPrefix(url, "https://") {
-		return fmt.Errorf("sponsor CSV URL must use HTTPS, got: %s", url)
+	u, err := parseSponsorCSVURL(ing.cfg.SponsorCSVURL)
+	if err != nil {
+		return err
 	}
 
-	log.Printf("downloading sponsor list from %s", url)
+	log.Printf("downloading sponsor list from %s", u.Redacted())
 
-	resp, err := http.Get(url)
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Minute)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u.String(), nil)
+	if err != nil {
+		return fmt.Errorf("build request: %w", err)
+	}
+
+	client := &http.Client{Timeout: 15 * time.Minute}
+	resp, err := client.Do(req)
 	if err != nil {
 		return fmt.Errorf("download sponsors CSV: %w", err)
 	}
@@ -117,6 +129,29 @@ func (ing *Ingester) streamSponsorsCSV(r io.Reader) (int, error) {
 	}
 
 	return total, nil
+}
+
+// parseSponsorCSVURL restricts downloads to the official gov.uk asset host to
+// mitigate SSRF when SPONSOR_CSV_URL is set via environment.
+func parseSponsorCSVURL(raw string) (*url.URL, error) {
+	u, err := url.Parse(raw)
+	if err != nil {
+		return nil, fmt.Errorf("parse sponsor URL: %w", err)
+	}
+	if u.Scheme != "https" {
+		return nil, fmt.Errorf("sponsor CSV URL must use HTTPS")
+	}
+	if u.Hostname() == "" {
+		return nil, fmt.Errorf("sponsor CSV URL must include a host")
+	}
+	host := strings.ToLower(u.Hostname())
+	if host != "assets.publishing.service.gov.uk" {
+		return nil, fmt.Errorf("sponsor CSV host must be assets.publishing.service.gov.uk, got %q", host)
+	}
+	if u.Path == "" || u.Path == "/" {
+		return nil, fmt.Errorf("sponsor CSV URL must include a path to the CSV file")
+	}
+	return u, nil
 }
 
 func findCol(idx map[string]int, names ...string) int {

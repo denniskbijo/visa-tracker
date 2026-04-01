@@ -3,9 +3,9 @@ package ingest
 import (
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/denniskbijo/visa-tracker/internal/config"
+	"github.com/denniskbijo/visa-tracker/internal/fsutil"
 	"github.com/denniskbijo/visa-tracker/internal/models"
 	"github.com/denniskbijo/visa-tracker/internal/store"
 	"gopkg.in/yaml.v3"
@@ -22,13 +22,13 @@ func New(db *store.DB, cfg *config.Config) *Ingester {
 
 type thresholdsFile struct {
 	VisaRoutes []struct {
-		Slug                string  `yaml:"slug"`
-		Name                string  `yaml:"name"`
-		Description         string  `yaml:"description"`
-		RequiresSponsor     bool    `yaml:"requires_sponsor"`
-		RequiresEndorsement bool    `yaml:"requires_endorsement"`
-		SalaryThresholdPence int64  `yaml:"salary_threshold_pence"`
-		DurationYears       float64 `yaml:"duration_years"`
+		Slug                 string  `yaml:"slug"`
+		Name                 string  `yaml:"name"`
+		Description          string  `yaml:"description"`
+		RequiresSponsor      bool    `yaml:"requires_sponsor"`
+		RequiresEndorsement  bool    `yaml:"requires_endorsement"`
+		SalaryThresholdPence int64   `yaml:"salary_threshold_pence"`
+		DurationYears        float64 `yaml:"duration_years"`
 	} `yaml:"visa_routes"`
 
 	Thresholds []struct {
@@ -68,15 +68,14 @@ func (ing *Ingester) LoadSeedData() error {
 }
 
 func (ing *Ingester) loadThresholds() error {
-	path := ing.cfg.DataDir + "/thresholds.yaml"
-	data, err := os.ReadFile(path)
+	data, err := fsutil.ReadFileUnderRoot(ing.cfg.DataDir, "thresholds.yaml")
 	if err != nil {
-		return fmt.Errorf("read %s: %w", path, err)
+		return fmt.Errorf("read thresholds.yaml: %w", err)
 	}
 
 	var f thresholdsFile
 	if err := yaml.Unmarshal(data, &f); err != nil {
-		return fmt.Errorf("parse %s: %w", path, err)
+		return fmt.Errorf("parse thresholds.yaml: %w", err)
 	}
 
 	for _, vr := range f.VisaRoutes {
@@ -141,15 +140,14 @@ func (ing *Ingester) loadThresholds() error {
 }
 
 func (ing *Ingester) loadSOCCodes() error {
-	path := ing.cfg.DataDir + "/soc_codes.yaml"
-	data, err := os.ReadFile(path)
+	data, err := fsutil.ReadFileUnderRoot(ing.cfg.DataDir, "soc_codes.yaml")
 	if err != nil {
-		return fmt.Errorf("read %s: %w", path, err)
+		return fmt.Errorf("read soc_codes.yaml: %w", err)
 	}
 
 	var f socFile
 	if err := yaml.Unmarshal(data, &f); err != nil {
-		return fmt.Errorf("parse %s: %w", path, err)
+		return fmt.Errorf("parse soc_codes.yaml: %w", err)
 	}
 
 	for _, s := range f.SOCCodes {
