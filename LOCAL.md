@@ -7,6 +7,31 @@ Use this checklist to run the app on your machine and confirm pages, API, and st
 - **Go 1.22+** (`go version`)
 - Network access to download the gov.uk sponsor CSV on first run (HTTPS)
 
+## gosec (optional)
+
+CI runs [gosec](https://github.com/securego/gosec) in `.github/workflows/security.yml`. To run the same checks locally, install the binary with Go:
+
+```bash
+go install github.com/securego/gosec/v2/cmd/gosec@latest
+```
+
+`go install` places the binary under **`$(go env GOPATH)/bin`**, which is often **not** on your `PATH`, so `gosec` may not be found until you fix that.
+
+From the repo root, either run it by full path (no `PATH` change):
+
+```bash
+"$(go env GOPATH)/bin/gosec" ./...
+```
+
+Or add Go’s bin directory for the current shell session, then use `gosec`:
+
+```bash
+export PATH="$(go env GOPATH)/bin:$PATH"
+gosec ./...
+```
+
+To make that permanent, add the same `export PATH=...` line to `~/.bashrc` or `~/.profile` (adjust for your shell).
+
 ## Steps
 
 ### 1. Clone and enter the repo
