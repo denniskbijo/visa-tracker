@@ -3,11 +3,6 @@ package store
 import (
 	"database/sql"
 	"fmt"
-	"log"
-	"os"
-	"path/filepath"
-	"sort"
-	"strings"
 
 	_ "modernc.org/sqlite"
 )
@@ -33,31 +28,4 @@ func (db *DB) Close() error {
 
 func (db *DB) Conn() *sql.DB {
 	return db.conn
-}
-
-func (db *DB) MigrateFromDir(dir string) error {
-	entries, err := os.ReadDir(dir)
-	if err != nil {
-		return fmt.Errorf("read migrations dir %s: %w", dir, err)
-	}
-
-	sort.Slice(entries, func(i, j int) bool {
-		return entries[i].Name() < entries[j].Name()
-	})
-
-	for _, e := range entries {
-		if !strings.HasSuffix(e.Name(), ".sql") {
-			continue
-		}
-		path := filepath.Join(dir, e.Name())
-		data, err := os.ReadFile(path)
-		if err != nil {
-			return fmt.Errorf("read migration %s: %w", e.Name(), err)
-		}
-		log.Printf("running migration: %s", e.Name())
-		if _, err := db.conn.Exec(string(data)); err != nil {
-			return fmt.Errorf("exec migration %s: %w", e.Name(), err)
-		}
-	}
-	return nil
 }
