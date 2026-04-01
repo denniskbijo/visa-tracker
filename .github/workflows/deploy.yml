@@ -5,6 +5,7 @@ on:
     branches: [main]
 
 jobs:
+  # Pushes the app to /opt/visa-tracker only. Caddy/HTTPS is configured on the VM (setup-vm.sh).
   deploy:
     name: Build and deploy to Oracle Cloud
     runs-on: ubuntu-latest

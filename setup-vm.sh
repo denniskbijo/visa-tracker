@@ -38,6 +38,10 @@ curl -fsSL -o caddy.tar.gz \
 tar xzf caddy.tar.gz caddy
 sudo mv caddy /usr/local/bin/caddy
 sudo chmod 755 /usr/local/bin/caddy
+sudo chown root:root /usr/local/bin/caddy
+if command -v restorecon &>/dev/null; then
+    sudo restorecon -v /usr/local/bin/caddy || true
+fi
 
 sudo mkdir -p /etc/caddy /var/lib/caddy
 sudo tee /etc/caddy/Caddyfile > /dev/null << 'CADDYSTUB'
