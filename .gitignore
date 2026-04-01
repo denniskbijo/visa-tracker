@@ -5,7 +5,8 @@
 visa-tracker
 visa-tracker-arm64
 visa-tracker-linux
-server
+# Only ignore a binary named "server" at repo root — not cmd/server/.
+/server
 /tmp/
 *.tar.gz
 .env
