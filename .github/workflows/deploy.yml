@@ -8,6 +8,9 @@ jobs:
   deploy:
     name: Build and deploy to Oracle Cloud
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}
     steps:
       - uses: actions/checkout@v4
 
@@ -15,15 +18,19 @@ jobs:
         with:
           go-version-file: go.mod
 
+      # go build looks for ./cmd/server from the module root (where go.mod lives).
       - name: Build amd64 binary
         run: GOOS=linux GOARCH=amd64 go build -o visa-tracker ./cmd/server
 
+      # If OCI_SSH_KEY is passphrase-protected, set Repository secret OCI_SSH_KEY_PASSPHRASE.
+      # Omit or leave empty if the key has no passphrase.
       - name: Stop service before replacing binary
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.OCI_HOST }}
           username: ${{ secrets.OCI_USER }}
           key: ${{ secrets.OCI_SSH_KEY }}
+          passphrase: ${{ secrets.OCI_SSH_KEY_PASSPHRASE }}
           script: sudo systemctl stop visa-tracker || true
 
       - name: Deploy files to VM
@@ -32,6 +39,7 @@ jobs:
           host: ${{ secrets.OCI_HOST }}
           username: ${{ secrets.OCI_USER }}
           key: ${{ secrets.OCI_SSH_KEY }}
+          passphrase: ${{ secrets.OCI_SSH_KEY_PASSPHRASE }}
           source: "visa-tracker,data/,static/,internal/templates/"
           target: /opt/visa-tracker
           overwrite: true
@@ -42,6 +50,7 @@ jobs:
           host: ${{ secrets.OCI_HOST }}
           username: ${{ secrets.OCI_USER }}
           key: ${{ secrets.OCI_SSH_KEY }}
+          passphrase: ${{ secrets.OCI_SSH_KEY_PASSPHRASE }}
           script: |
             sudo systemctl start visa-tracker
             sleep 3
