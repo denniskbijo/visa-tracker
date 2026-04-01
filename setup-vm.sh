@@ -2,14 +2,13 @@
 set -euo pipefail
 
 # Run this ON the Oracle Cloud VM after first SSH login.
-# Usage: ssh opc@<VM_IP> 'bash -s' < setup-vm.sh
+# Copy with: scp setup-vm.sh opc@<VM_IP>:~/
+# Then:       chmod +x ~/setup-vm.sh && ~/setup-vm.sh
 #
-# What it does:
-#   1. Opens firewall ports 80/443
-#   2. Installs Caddy
-#   3. Creates /opt/visa-tracker directory
-#   4. Installs systemd service for visa-tracker
-#   5. Prompts for DuckDNS domain and configures Caddy
+# Caddy is installed from the official GitHub release (amd64 tarball) instead of
+# dnf copr -- copr often appears to "hang" on small VMs while downloading metadata.
+
+CADDY_VERSION="${CADDY_VERSION:-2.11.2}"
 
 echo "==> Opening firewall ports 80 and 443..."
 if command -v firewall-cmd &>/dev/null; then
@@ -23,19 +22,51 @@ elif command -v iptables &>/dev/null; then
 fi
 echo "    Firewall ports opened."
 
-echo "==> Installing Caddy..."
-if command -v dnf &>/dev/null; then
-    sudo dnf install -y 'dnf-command(copr)' 2>/dev/null || true
-    sudo dnf copr enable -y @caddy/caddy 2>/dev/null || true
-    sudo dnf install -y caddy
-elif command -v apt &>/dev/null; then
-    sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https curl
-    curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
-    curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
-    sudo apt update
-    sudo apt install -y caddy
-fi
-echo "    Caddy installed."
+echo "==> Installing Caddy (${CADDY_VERSION}, official binary)..."
+ARCH="$(uname -m)"
+case "$ARCH" in
+    x86_64) CADDY_ARCH="amd64" ;;
+    aarch64) CADDY_ARCH="arm64" ;;
+    *) echo "Unsupported arch: $ARCH"; exit 1 ;;
+esac
+
+TMP="$(mktemp -d)"
+trap 'rm -rf "$TMP"' EXIT
+cd "$TMP"
+curl -fsSL -o caddy.tar.gz \
+    "https://github.com/caddyserver/caddy/releases/download/v${CADDY_VERSION}/caddy_${CADDY_VERSION}_linux_${CADDY_ARCH}.tar.gz"
+tar xzf caddy.tar.gz caddy
+sudo mv caddy /usr/local/bin/caddy
+sudo chmod 755 /usr/local/bin/caddy
+
+sudo mkdir -p /etc/caddy /var/lib/caddy
+sudo tee /etc/caddy/Caddyfile > /dev/null << 'CADDYSTUB'
+# Replaced below after DuckDNS prompts
+:80 {
+    respond "visa-tracker: configure DuckDNS in setup-vm.sh"
+}
+CADDYSTUB
+
+sudo tee /etc/systemd/system/caddy.service > /dev/null << 'UNIT'
+[Unit]
+Description=Caddy reverse proxy
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/local/bin/caddy run --environ --config /etc/caddy/Caddyfile
+ExecReload=/usr/local/bin/caddy reload --config /etc/caddy/Caddyfile --force
+TimeoutStopSec=5
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+
+sudo systemctl daemon-reload
+sudo systemctl enable caddy
+sudo systemctl restart caddy
+echo "    Caddy installed and running."
 
 echo "==> Creating app directory..."
 sudo mkdir -p /opt/visa-tracker/internal
@@ -80,7 +111,6 @@ ${FQDN} {
     reverse_proxy localhost:8080
 }
 EOF
-sudo systemctl enable caddy
 sudo systemctl restart caddy
 echo "    Caddy configured for https://${FQDN}"
 
