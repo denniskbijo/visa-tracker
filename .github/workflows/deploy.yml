@@ -25,7 +25,7 @@ jobs:
       # If OCI_SSH_KEY is passphrase-protected, set Repository secret OCI_SSH_KEY_PASSPHRASE.
       # Omit or leave empty if the key has no passphrase.
       - name: Stop service before replacing binary
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.2.5
         with:
           host: ${{ secrets.OCI_HOST }}
           username: ${{ secrets.OCI_USER }}
@@ -45,7 +45,7 @@ jobs:
           overwrite: true
 
       - name: Start service
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.2.5
         with:
           host: ${{ secrets.OCI_HOST }}
           username: ${{ secrets.OCI_USER }}
