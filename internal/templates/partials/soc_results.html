@@ -3,10 +3,10 @@
   <table class="data-table">
     <thead>
       <tr>
-        <th>SOC CODE</th>
-        <th>TITLE</th>
-        <th>GOING RATE</th>
-        <th>ISL</th>
+        <th><span class="glossary" tabindex="0">SOC code<span class="glossary-tip">Standard Occupational Classification — the official code the Home Office uses for your job role.</span></span></th>
+        <th>Job title</th>
+        <th><span class="glossary" tabindex="0">Going rate<span class="glossary-tip">The minimum salary required for this job code under Skilled Worker visa rules.</span></span></th>
+        <th><span class="glossary" tabindex="0">ISL<span class="glossary-tip">Immigration Salary List — job codes on this list have a reduced salary threshold.</span></span></th>
       </tr>
     </thead>
     <tbody>
@@ -15,7 +15,7 @@
         <td class="mono green">{{.Code}}</td>
         <td>
           {{.Title}}
-          <div style="font-size:11px;color:var(--text-hint);margin-top:2px">{{.Description}}</div>
+          <div class="cell-sub">{{.Description}}</div>
         </td>
         <td class="mono green">{{.GoingRatePounds}} /yr</td>
         <td>
@@ -25,8 +25,22 @@
       {{end}}
       {{if not .Codes}}
       <tr>
-        <td colspan="4" style="text-align:center;color:var(--text-secondary);padding:20px">
-          {{if .Query}}No SOC codes found for "{{.Query}}"{{else}}All tech/STEM SOC codes are shown below{{end}}
+        <td colspan="4">
+          <div class="empty-state inline">
+            {{if .Query}}
+            <p class="empty-title">No job codes found for "{{.Query}}"</p>
+            <p class="empty-hint">Try a job title like "developer" or a code like "2136".</p>
+            {{else}}
+            <p class="empty-title">Browse tech and STEM job codes</p>
+            <p class="empty-hint">Search by job title or SOC code to filter the list below.</p>
+            <div class="empty-examples">
+              <span class="empty-label">Try:</span>
+              <button type="button" class="example-chip" hx-get="/soc/results?q=software" hx-target="#soc-results" hx-indicator="#soc-loading">software</button>
+              <button type="button" class="example-chip" hx-get="/soc/results?q=2136" hx-target="#soc-results" hx-indicator="#soc-loading">2136</button>
+              <button type="button" class="example-chip" hx-get="/soc/results?q=data" hx-target="#soc-results" hx-indicator="#soc-loading">data</button>
+            </div>
+            {{end}}
+          </div>
         </td>
       </tr>
       {{end}}

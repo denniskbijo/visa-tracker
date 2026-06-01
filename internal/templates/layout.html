@@ -11,16 +11,20 @@
 <div class="wrap">
 
   <nav class="nav">
-    <a href="/" style="text-decoration:none">
+    <a href="/" class="logo-link">
       <div class="logo">VISA-TRACKER
         <span>Open-source UK tech/STEM visa tool</span>
       </div>
     </a>
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true" />
+    <label for="nav-toggle" class="nav-menu-btn" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </label>
     <div class="nav-links">
       <a href="/" {{if eq .ActiveNav "home"}}class="active"{{end}}>Home</a>
-      <a href="/visas" {{if eq .ActiveNav "visas"}}class="active"{{end}}>Visa tracker</a>
-      <a href="/sponsors" {{if eq .ActiveNav "sponsors"}}class="active"{{end}}>Sponsors</a>
-      <a href="/soc" {{if eq .ActiveNav "soc"}}class="active"{{end}}>SOC codes</a>
+      <a href="/visas" {{if eq .ActiveNav "visas"}}class="active"{{end}}>Compare routes</a>
+      <a href="/sponsors" {{if eq .ActiveNav "sponsors"}}class="active"{{end}}>Find sponsors</a>
+      <a href="/soc" {{if eq .ActiveNav "soc"}}class="active"{{end}}>Job codes</a>
     </div>
   </nav>
 

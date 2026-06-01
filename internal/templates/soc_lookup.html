@@ -1,15 +1,17 @@
 {{define "content"}}
+<p class="page-intro">Find your job's <span class="glossary" tabindex="0">SOC code<span class="glossary-tip">Standard Occupational Classification — the official code the Home Office uses for your job role.</span></span> and see the minimum salary (<span class="glossary" tabindex="0">going rate<span class="glossary-tip">The minimum salary required for your specific job code under Skilled Worker visa rules.</span></span>) you need to qualify.</p>
+
 <div class="card" style="margin-bottom:16px">
   <div class="card-header">
-    <div class="card-title">// SOC CODE LOOKUP</div>
+    <div class="card-title">Job code lookup</div>
     <div class="card-badge">{{len .AllCodes}} codes</div>
   </div>
 
-  <form class="search-box" hx-get="/soc/results" hx-target="#soc-results" hx-trigger="submit" hx-indicator="#soc-loading">
-    <input type="text" name="q" class="search-input" placeholder="search by job title or SOC code..." value="{{.Query}}" />
-    <button type="submit" class="btn-primary">search</button>
+  <form class="search-box" hx-get="/soc/results" hx-target="#soc-results" hx-trigger="keyup changed delay:300ms from:.search-input, submit" hx-indicator="#soc-loading">
+    <input type="text" name="q" class="search-input" placeholder="e.g. software developer, 2136, data scientist..." value="{{.Query}}" autocomplete="off" />
+    <button type="submit" class="btn-primary">Search</button>
   </form>
-  <div id="soc-loading" class="htmx-indicator">searching SOC codes...</div>
+  <div id="soc-loading" class="htmx-indicator">Searching job codes...</div>
 </div>
 
 <div id="soc-results">

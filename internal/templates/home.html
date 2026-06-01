@@ -1,26 +1,27 @@
 {{define "content"}}
 <div class="hero">
   <div class="hero-grid"></div>
-  <div class="hero-tag">// OPEN SOURCE · UK VISA TRACKER</div>
+  <div class="hero-tag">Open source · UK visa tracker</div>
   <h1>Track your path to a<br><em>UK tech visa</em></h1>
-  <p>Real-time salary thresholds, 60k+ licensed sponsors, SOC code lookups — all from official gov.uk data. Built for tech and STEM professionals of any nationality.</p>
+  <p>Compare visa routes, search licensed employers, and look up job codes — all from official gov.uk data. Built for tech and STEM professionals of any nationality.</p>
   <div class="hero-actions">
-    <a href="/visas" class="btn-primary">visa dashboard</a>
-    <a href="/sponsors" class="btn-outline">search sponsors →</a>
+    <a href="/visas" class="btn-primary">Compare visa routes</a>
+    <a href="/sponsors" class="btn-outline">Find sponsors</a>
   </div>
   <div class="hero-stats">
     <div class="stat-item"><div class="num">{{.RouteCount}}</div><div class="lbl">Visa routes tracked</div></div>
     <div class="stat-item"><div class="num">{{.SponsorCount}}</div><div class="lbl">Licensed sponsors</div></div>
-    <div class="stat-item"><div class="num">{{.SOCCount}}</div><div class="lbl">SOC codes</div></div>
+    <div class="stat-item"><div class="num">{{.SOCCount}}</div><div class="lbl">Job codes</div></div>
   </div>
 </div>
 
 <div class="section-row">
   <div class="card">
     <div class="card-header">
-      <div class="card-title">// VISA ROUTES</div>
+      <div class="card-title">Visa routes</div>
       <div class="card-badge">live</div>
     </div>
+    <p class="chart-caption">Bar length shows minimum salary required — longer bar means a higher threshold. Routes with no minimum show a short bar.</p>
     <div class="visa-bars">
       {{range .Routes}}
       <div class="visa-row">
@@ -30,32 +31,34 @@
       </div>
       {{end}}
     </div>
+    {{if .SkilledWorker}}
     <div class="threshold-box">
-      <div class="th-label">// SKILLED WORKER THRESHOLD</div>
-      <div class="th-value">£38,700 / yr</div>
-      <div class="th-sub">General threshold · effective Apr 2024</div>
+      <div class="th-label">Skilled Worker threshold</div>
+      <div class="th-value">{{.SkilledWorker.ThresholdPounds}} / yr</div>
+      {{if .SkilledWorkerNote}}<div class="th-sub">{{.SkilledWorkerNote}}</div>{{end}}
     </div>
+    {{end}}
   </div>
 
   <div class="card">
     <div class="card-header">
-      <div class="card-title">// QUICK LINKS</div>
+      <div class="card-title">Quick links</div>
     </div>
     <div class="detail-grid">
-      <a href="/sponsors" class="detail-item" style="text-decoration:none">
-        <div class="di-label">SPONSOR SEARCH</div>
+      <a href="/sponsors" class="detail-item detail-link">
+        <div class="di-label">Find sponsors</div>
         <div class="di-value green">{{.SponsorCount}} licensed employers</div>
         <div class="di-note">Search by company name, city, or visa route</div>
       </a>
-      <a href="/soc" class="detail-item" style="text-decoration:none">
-        <div class="di-label">SOC CODE LOOKUP</div>
+      <a href="/soc" class="detail-item detail-link">
+        <div class="di-label">Job code lookup</div>
         <div class="di-value green">{{.SOCCount}} tech/STEM codes</div>
-        <div class="di-note">Find your occupation code and going-rate salary</div>
+        <div class="di-note">Find your occupation code and required salary</div>
       </a>
-      <a href="/api/v1/visas" class="detail-item" style="text-decoration:none">
+      <a href="/api/v1/visas" class="detail-item detail-link">
         <div class="di-label">JSON API</div>
         <div class="di-value green">/api/v1/*</div>
-        <div class="di-note">Programmatic access to all visa data</div>
+        <div class="di-note">Programmatic access for developers</div>
       </a>
     </div>
   </div>

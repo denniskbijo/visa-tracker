@@ -2,16 +2,16 @@
 {{if .Sponsors}}
 <div class="card">
   <div class="card-header">
-    <div class="card-title">// RESULTS</div>
+    <div class="card-title">Results</div>
     <div class="card-badge">{{.Total}} found</div>
   </div>
   <table class="data-table">
     <thead>
       <tr>
-        <th>ORGANISATION</th>
-        <th>CITY</th>
-        <th>ROUTE</th>
-        <th>RATING</th>
+        <th>Organisation</th>
+        <th>City</th>
+        <th>Route</th>
+        <th><span class="glossary" tabindex="0">Rating<span class="glossary-tip">Home Office compliance rating — A means fully compliant, B means action plan in place.</span></span></th>
       </tr>
     </thead>
     <tbody>
@@ -25,12 +25,23 @@
       {{end}}
     </tbody>
   </table>
+  <p class="table-note">Being on the register does not guarantee sponsorship — contact the employer's HR team directly.</p>
 </div>
 {{else}}
-<div class="card">
-  <p style="color:var(--text-secondary);font-size:13px;padding:20px 0;text-align:center">
-    {{if .Query}}No sponsors found for "{{.Query}}"{{else}}Enter a search term to find licensed sponsors{{end}}
-  </p>
+<div class="card empty-state">
+  {{if .Query}}
+  <p class="empty-title">No sponsors found for "{{.Query}}"</p>
+  <p class="empty-hint">Try a shorter name, check spelling, or clear the city/route filters.</p>
+  {{else}}
+  <p class="empty-title">Search licensed UK employers</p>
+  <p class="empty-hint">Try searching for a company name, or filter by city and route.</p>
+  <div class="empty-examples">
+    <span class="empty-label">Examples:</span>
+    <button type="button" class="example-chip" hx-get="/sponsors/results?q=Google" hx-target="#sponsor-results" hx-indicator="#sponsor-loading">Google</button>
+    <button type="button" class="example-chip" hx-get="/sponsors/results?q=London&city=London" hx-target="#sponsor-results" hx-indicator="#sponsor-loading">London</button>
+    <button type="button" class="example-chip" hx-get="/sponsors/results?route=Skilled+Worker" hx-target="#sponsor-results" hx-indicator="#sponsor-loading">Skilled Worker</button>
+  </div>
+  {{end}}
 </div>
 {{end}}
 {{end}}

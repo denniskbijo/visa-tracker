@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 	"strconv"
+
+	"github.com/denniskbijo/visa-tracker/internal/models"
 )
 
 func (h *Handler) handleSponsors(w http.ResponseWriter, r *http.Request) {
@@ -13,10 +15,20 @@ func (h *Handler) handleSponsors(w http.ResponseWriter, r *http.Request) {
 	total, _ := h.db.SponsorCount()
 	cities, _ := h.db.DistinctSponsorCities(30)
 
-	results, err := h.db.SearchSponsors(q, routeFilter, cityFilter, 50, 0)
-	if err != nil {
-		http.Error(w, "search failed", http.StatusInternalServerError)
-		return
+	var results *models.SponsorSearchResult
+	var err error
+	if q != "" || routeFilter != "" || cityFilter != "" {
+		results, err = h.db.SearchSponsors(q, routeFilter, cityFilter, 50, 0)
+		if err != nil {
+			http.Error(w, "search failed", http.StatusInternalServerError)
+			return
+		}
+	} else {
+		results = &models.SponsorSearchResult{
+			Query:       q,
+			RouteFilter: routeFilter,
+			CityFilter:  cityFilter,
+		}
 	}
 
 	data := struct {
@@ -47,6 +59,15 @@ func (h *Handler) handleSponsorResults(w http.ResponseWriter, r *http.Request) {
 	routeFilter := r.URL.Query().Get("route")
 	cityFilter := r.URL.Query().Get("city")
 	offset, _ := strconv.Atoi(r.URL.Query().Get("offset"))
+
+	if q == "" && routeFilter == "" && cityFilter == "" {
+		h.renderPartial(w, "sponsor_results", &models.SponsorSearchResult{
+			Query:       q,
+			RouteFilter: routeFilter,
+			CityFilter:  cityFilter,
+		})
+		return
+	}
 
 	results, err := h.db.SearchSponsors(q, routeFilter, cityFilter, 50, offset)
 	if err != nil {
