@@ -1,0 +1,70 @@
+{{define "content"}}
+<p class="page-intro">Track your visa expiry and ILR countdown. Saved only in your browser. No account needed.</p>
+
+<div class="section-row">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Your visa</div>
+    </div>
+    <form id="timeline-form" class="timeline-form">
+      <label class="form-label" for="timeline-route">Current visa route</label>
+      <select id="timeline-route" name="route" class="search-select timeline-select" required>
+        <option value="">Select a route...</option>
+        {{range .Routes}}
+        <option value="{{.Slug}}">{{.Name}}</option>
+        {{end}}
+      </select>
+
+      <label class="form-label" for="timeline-start">Visa start date</label>
+      <input type="date" id="timeline-start" name="start" class="search-input" required />
+
+      <label class="form-label" for="timeline-label">Label (optional)</label>
+      <input type="text" id="timeline-label" name="label" class="search-input" placeholder="e.g. Current Skilled Worker visa" />
+
+      <button type="submit" class="btn-primary">Save timeline</button>
+      <button type="button" class="btn-outline" id="timeline-clear">Clear saved data</button>
+    </form>
+  </div>
+
+  <div class="card" id="timeline-display">
+    <div class="card-header">
+      <div class="card-title">Your countdown</div>
+    </div>
+    <div id="timeline-empty" class="empty-state inline">
+      <p class="empty-title">No timeline saved yet</p>
+      <p class="empty-hint">Select your visa route and start date to see expiry and ILR estimates.</p>
+    </div>
+    <div id="timeline-stats" class="hidden">
+      <div class="timeline-stat-grid">
+        <div class="timeline-stat">
+          <div class="timeline-stat-num" id="stat-days-left">-</div>
+          <div class="timeline-stat-lbl">Days until visa expires</div>
+          <div class="timeline-stat-sub" id="stat-expiry"></div>
+        </div>
+        <div class="timeline-stat" id="stat-ilr-block">
+          <div class="timeline-stat-num" id="stat-ilr-days">-</div>
+          <div class="timeline-stat-lbl">Days until ILR eligible</div>
+          <div class="timeline-stat-sub" id="stat-ilr-date"></div>
+        </div>
+      </div>
+      <div class="threshold-box" id="stat-note-box" style="margin-top:16px;display:none">
+        <div class="th-label">Note</div>
+        <div class="th-sub" id="stat-note"></div>
+      </div>
+      <div class="detail-grid" style="margin-top:16px">
+        <a href="/wizard" class="detail-item detail-link">
+          <div class="di-label">Planning next steps?</div>
+          <div class="di-note">Try the visa wizard to find your next route</div>
+        </a>
+        <a href="#" id="stat-route-link" class="detail-item detail-link">
+          <div class="di-label">Route details</div>
+          <div class="di-note" id="stat-route-name"></div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="application/json" id="timeline-routes-data">{{.RoutesJSON}}</script>
+<script src="/static/app.js" defer></script>
+{{end}}

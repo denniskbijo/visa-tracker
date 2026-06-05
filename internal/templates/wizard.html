@@ -1,0 +1,62 @@
+{{define "content"}}
+<p class="page-intro">Answer a few questions about your situation and we'll suggest UK visa routes that may fit, with plain-English reasons why.</p>
+
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">Visa wizard</div>
+    <div class="card-badge wizard-step-label">Step <span id="wizard-step-num">1</span> of 4</div>
+  </div>
+
+  <div class="wizard-progress"><div class="wizard-progress-fill" id="wizard-progress"></div></div>
+
+  <form id="wizard-form" hx-post="/wizard/results" hx-target="#wizard-results" hx-swap="innerHTML" hx-indicator="#wizard-loading">
+    <fieldset class="wizard-step" data-step="1">
+      <legend class="wizard-question">Do you have a UK job offer?</legend>
+      <div class="wizard-options">
+        <label class="wizard-option"><input type="radio" name="job_offer" value="yes" required /> Yes, I have a signed or verbal offer</label>
+        <label class="wizard-option"><input type="radio" name="job_offer" value="no" /> No, not yet</label>
+      </div>
+    </fieldset>
+
+    <fieldset class="wizard-step hidden" data-step="2">
+      <legend class="wizard-question">Does your employer have a sponsor licence?</legend>
+      <p class="wizard-hint">Employers must be on the gov.uk Register of Licensed Sponsors to hire on most work visas.</p>
+      <div class="wizard-options">
+        <label class="wizard-option"><input type="radio" name="sponsor" value="yes" /> Yes, they're a licensed sponsor</label>
+        <label class="wizard-option"><input type="radio" name="sponsor" value="unsure" /> Not sure, I need to check</label>
+        <label class="wizard-option"><input type="radio" name="sponsor" value="no" /> No / no employer yet</label>
+      </div>
+    </fieldset>
+
+    <fieldset class="wizard-step hidden" data-step="3">
+      <legend class="wizard-question">What's your expected annual salary?</legend>
+      <p class="wizard-hint">In pounds per year, before tax. Leave blank if you don't know yet.</p>
+      <div class="wizard-salary">
+        <span class="wizard-currency">£</span>
+        <input type="number" name="salary" class="search-input" placeholder="e.g. 45000" min="0" step="1000" />
+      </div>
+    </fieldset>
+
+    <fieldset class="wizard-step hidden" data-step="4">
+      <legend class="wizard-question">What's your education background?</legend>
+      <div class="wizard-options">
+        <label class="wizard-option"><input type="radio" name="background" value="none" required /> Other / not listed</label>
+        <label class="wizard-option"><input type="radio" name="background" value="uk_graduate" /> Recent graduate of a UK university</label>
+        <label class="wizard-option"><input type="radio" name="background" value="top_university" /> Graduate of a top global university (HPI eligible)</label>
+      </div>
+    </fieldset>
+
+    <div class="wizard-nav">
+      <button type="button" class="btn-outline hidden" id="wizard-prev">Back</button>
+      <button type="button" class="btn-primary" id="wizard-next">Next</button>
+      <button type="submit" class="btn-primary hidden" id="wizard-submit">See recommendations</button>
+    </div>
+  </form>
+
+  <div id="wizard-loading" class="htmx-indicator">Analysing your answers...</div>
+</div>
+
+<div id="wizard-results"></div>
+
+<script src="/static/app.js" defer></script>
+{{end}}

@@ -29,21 +29,21 @@ Step-by-step guide to deploy visa-tracker on an Oracle Cloud VM with HTTPS and a
 | **Name** | `visa-tracker` |
 | **Region** | Your nearest (e.g. UK South - London) |
 | **Image** | Oracle Linux 9 |
-| **Shape** | VM.Standard.E2.1.Micro (AMD) -- 1 OCPU, 1 GB RAM (Always Free) |
+| **Shape** | VM.Standard.E2.1.Micro (AMD), 1 OCPU, 1 GB RAM (Always Free) |
 | **Networking** | Create new VCN or use default. **Tick "Assign public IPv4 address"** |
 | **SSH key** | Upload your public key (`~/.ssh/id_ed25519.pub`) |
 | **Boot volume** | 50 GB (default) |
 
-4. Click **Create** -- the VM provisions in about 60 seconds
+4. Click **Create**. The VM provisions in about 60 seconds
 5. Once running, note the **Public IP address** from the instance details page
 
 ### Shape notes
 
 | Shape | Arch | Free tier? | Specs |
 |---|---|---|---|
-| VM.Standard.E2.1.Micro | AMD (x86_64) | Yes -- 1 OCPU / 1 GB forever | Recommended. App uses ~30 MB idle |
-| VM.Standard.A1.Flex | ARM (aarch64) | Yes -- 4 OCPU / 24 GB total forever | Best specs, but unavailable in some regions (e.g. London) |
-| VM.Standard.E5.Flex | AMD (x86_64) | No -- paid (~$22/mo) | Not needed for this app |
+| VM.Standard.E2.1.Micro | AMD (x86_64) | Yes, 1 OCPU / 1 GB forever | Recommended. App uses ~30 MB idle |
+| VM.Standard.A1.Flex | ARM (aarch64) | Yes, 4 OCPU / 24 GB total forever | Best specs, but unavailable in some regions (e.g. London) |
+| VM.Standard.E5.Flex | AMD (x86_64) | No, paid (~$22/mo) | Not needed for this app |
 
 If you use A1.Flex (ARM), change `GOARCH=amd64` to `GOARCH=arm64` in `deploy.sh` and `.github/workflows/deploy.yml`.
 
@@ -51,7 +51,7 @@ If you use A1.Flex (ARM), change `GOARCH=amd64` to `GOARCH=arm64` in `deploy.sh`
 
 ## Step 2: Open firewall ports
 
-Oracle has **two firewalls** -- the cloud security list AND the OS-level firewall. Both must allow ports 80 and 443.
+Oracle has **two firewalls**: the cloud security list AND the OS-level firewall. Both must allow ports 80 and 443.
 
 ### 2a. Cloud Security List (Oracle Console)
 
@@ -76,11 +76,11 @@ The `setup-vm.sh` script handles this automatically.
 First, register a free subdomain:
 
 1. Go to **https://www.duckdns.org** and sign in with GitHub
-2. Create a subdomain -- e.g. `visa-tracker` (gives you `visa-tracker.duckdns.org`)
+2. Create a subdomain, e.g. `visa-tracker` (gives you `visa-tracker.duckdns.org`)
 3. Set the IP to your VM's public IP address
 4. Copy your **DuckDNS token** (shown at the top of the page)
 
-Copy the script to the VM and run it **on the instance** (do not pipe `bash -s` over SSH -- long `dnf` installs can drop the connection and look hung):
+Copy the script to the VM and run it **on the instance** (do not pipe `bash -s` over SSH; long `dnf` installs can drop the connection and look hung):
 
 ```bash
 scp setup-vm.sh opc@<YOUR_VM_IP>:~/
@@ -104,7 +104,7 @@ When prompted:
 - **DuckDNS subdomain**: enter just the subdomain part (e.g. `visa-tracker`)
 - **DuckDNS token**: paste the token from duckdns.org
 
-**Oracle Linux and Caddy:** the image uses **SELinux** in enforcing mode. The Caddy binary must be owned by **`root`** and labeled so systemd (running as root) may execute it under `/usr/local/bin`. Current **`setup-vm.sh`** sets **`chown root:root`**, **`chmod 755`**, and **`restorecon`** on `/usr/local/bin/caddy` after install. If you installed Caddy manually or copied the binary as a normal user, **`systemctl status caddy`** may show **`status=203/EXEC`** even when **`file /usr/local/bin/caddy`** looks correct — fix with ownership + **`restorecon`** (see **Caddy failed** under Troubleshooting below).
+**Oracle Linux and Caddy:** the image uses **SELinux** in enforcing mode. The Caddy binary must be owned by **`root`** and labeled so systemd (running as root) may execute it under `/usr/local/bin`. Current **`setup-vm.sh`** sets **`chown root:root`**, **`chmod 755`**, and **`restorecon`** on `/usr/local/bin/caddy` after install. If you installed Caddy manually or copied the binary as a normal user, **`systemctl status caddy`** may show **`status=203/EXEC`** even when **`file /usr/local/bin/caddy`** looks correct. Fix with ownership + **`restorecon`** (see **Caddy failed** under Troubleshooting below).
 
 ---
 
@@ -178,7 +178,7 @@ git add -A && git commit -m "test deploy" && git push origin master:main
 
 Both firewalls need to be open. Check:
 ```bash
-# on the VM -- is Caddy running?
+# on the VM: is Caddy running?
 sudo systemctl status caddy
 
 # is the app running?
@@ -250,7 +250,7 @@ sudo systemctl restart caddy
 sudo systemctl status caddy
 ```
 
-Then from your laptop, **`curl -I https://your-name.duckdns.org`** should get a response (often **200** or **502** if the app is down — **502** still proves Caddy is listening).
+Then from your laptop, **`curl -I https://your-name.duckdns.org`** should get a response (often **200** or **502** if the app is down; **502** still proves Caddy is listening).
 
 ### App starts but pages don't load
 
@@ -278,7 +278,7 @@ nslookup visa-tracker.duckdns.org
 - Verify the GitHub secrets **`OCI_HOST`**, **`OCI_USER`**, and **`OCI_SSH_KEY`** are set correctly
 - Ensure `OCI_SSH_KEY` contains the **private** key, not the public key
 - If the log shows **`ssh.ParsePrivateKey: ssh: this private key is passphrase protected`** or **`unable to authenticate`**, set **`OCI_SSH_KEY_PASSPHRASE`** to the key’s passphrase, or switch to a passphrase-less deploy key and update `OCI_SSH_KEY`
-- Check that the VM allows SSH from GitHub’s runners (outbound SSH from the internet to your VM on port 22 — same as your laptop)
+- Check that the VM allows SSH from GitHub's runners (outbound SSH from the internet to your VM on port 22, same as your laptop)
 
 ### `scp: ... Text file busy` when running `./deploy.sh`
 
@@ -292,7 +292,7 @@ ssh opc@<VM_IP> 'sudo systemctl start visa-tracker'
 
 ### Caddy install stuck on "Installing Caddy..."
 
-Older versions of `setup-vm.sh` used `dnf copr enable @caddy/caddy`, which can sit for many minutes on a 1 GB VM. **Pull the latest `setup-vm.sh`** from the repo -- it downloads the official Caddy binary from GitHub instead. If a run is stuck, press **Ctrl+C**, then run the updated script again.
+Older versions of `setup-vm.sh` used `dnf copr enable @caddy/caddy`, which can sit for many minutes on a 1 GB VM. **Pull the latest `setup-vm.sh`** from the repo; it downloads the official Caddy binary from GitHub instead. If a run is stuck, press **Ctrl+C**, then run the updated script again.
 
 ### Oracle Cloud metrics and logs
 

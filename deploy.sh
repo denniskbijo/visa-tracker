@@ -4,7 +4,7 @@ set -euo pipefail
 # Deploy visa-tracker to an Oracle Cloud VM.
 # Usage: ./deploy.sh <VM_IP> [SSH_USER]
 #
-# This updates only the app binary, data, templates, and static assets — not Caddy.
+# This updates only the app binary, data, templates, and static assets, not Caddy.
 #
 # Prerequisites:
 #   - SSH key access to the VM

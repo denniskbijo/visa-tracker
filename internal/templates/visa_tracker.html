@@ -1,12 +1,12 @@
 {{define "content"}}
-<p class="page-intro">Compare six UK work visa routes side by side — salary requirements, processing times, and whether you need a sponsor.</p>
+<p class="page-intro">Compare six UK work visa routes side by side: salary requirements, processing times, and whether you need a sponsor.</p>
 
 <div class="card card-full" style="margin-bottom:16px">
   <div class="card-header">
     <div class="card-title">Visa route comparison</div>
     <div class="card-badge">{{len .Routes}} routes</div>
   </div>
-  <p class="chart-caption">Bar length shows minimum salary required — longer bar means a higher threshold. Routes with no minimum show a short bar.</p>
+  <p class="chart-caption">Bar length shows minimum salary required. Longer bar means a higher threshold. Routes with no minimum show a short bar.</p>
   <div class="visa-bars">
     {{range .Routes}}
     <div class="visa-row">

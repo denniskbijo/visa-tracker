@@ -24,7 +24,7 @@ visa_routes:
     name: High Potential Individual
     description: >
       For graduates of top global universities (as listed by the Home Office). Two-year
-      visa with no sponsor required. Cannot be extended — switch to another route.
+      visa with no sponsor required. Cannot be extended; switch to another route.
     requires_sponsor: false
     requires_endorsement: false
     salary_threshold_pence: 0

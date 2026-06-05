@@ -1,17 +1,17 @@
 # visa-tracker
 
-Open-source UK work visa tracker for tech and STEM professionals. Track salary thresholds, search 140k+ licensed sponsors, look up SOC codes -- all from official gov.uk data.
+Open-source UK work visa tracker for tech and STEM professionals. Track salary thresholds, search 140k+ licensed sponsors, look up SOC codes, all from official gov.uk data.
 
 Built with Go, SQLite (pure Go), and HTMX. No JavaScript frameworks. No CGO. Single binary.
 
 ## Features
 
-- **Visa Route Dashboard** -- compare 6 UK work visa routes side-by-side (Skilled Worker, Global Talent, HPI, Scale-up, ICT, Graduate) with salary thresholds, processing times, and eligibility at a glance
-- **Sponsor Search** -- full-text search across 140k+ employers from the [gov.uk Register of Licensed Sponsors](https://www.gov.uk/government/publications/register-of-licensed-sponsors-workers), filterable by city and route
-- **SOC Code Lookup** -- find your Standard Occupational Classification code, its going-rate salary, and whether it's on the Immigration Salary List
-- **JSON API** -- programmatic access at `/api/v1/visas`, `/api/v1/sponsors?q=`, `/api/v1/soc?q=`
-- **Auto-refresh** -- sponsor data re-downloaded from gov.uk every 24 hours (configurable)
-- **Nationality-agnostic** -- designed for any nationality, any tech/STEM role
+- **Visa Route Dashboard**: compare 6 UK work visa routes side-by-side (Skilled Worker, Global Talent, HPI, Scale-up, ICT, Graduate) with salary thresholds, processing times, and eligibility at a glance
+- **Sponsor Search**: full-text search across 140k+ employers from the [gov.uk Register of Licensed Sponsors](https://www.gov.uk/government/publications/register-of-licensed-sponsors-workers), filterable by city and route
+- **SOC Code Lookup**: find your Standard Occupational Classification code, its going-rate salary, and whether it's on the Immigration Salary List
+- **JSON API**: programmatic access at `/api/v1/visas`, `/api/v1/sponsors?q=`, `/api/v1/soc?q=`
+- **Auto-refresh**: sponsor data re-downloaded from gov.uk every 24 hours (configurable)
+- **Nationality-agnostic**: designed for any nationality, any tech/STEM role
 
 ## Quick Start
 

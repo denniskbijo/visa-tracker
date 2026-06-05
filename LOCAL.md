@@ -158,4 +158,4 @@ PORT=3000 DB_PATH=/tmp/vt.db go run ./cmd/server
 
 ## Related docs
 
-- [README.md](README.md) -- project overview and API
+- [README.md](README.md): project overview and API

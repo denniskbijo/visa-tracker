@@ -6,7 +6,7 @@ set -euo pipefail
 # Then:       chmod +x ~/setup-vm.sh && ~/setup-vm.sh
 #
 # Caddy is installed from the official GitHub release (amd64 tarball) instead of
-# dnf copr -- copr often appears to "hang" on small VMs while downloading metadata.
+# dnf copr: copr often appears to "hang" on small VMs while downloading metadata.
 
 CADDY_VERSION="${CADDY_VERSION:-2.11.2}"
 

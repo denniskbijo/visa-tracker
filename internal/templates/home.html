@@ -3,10 +3,11 @@
   <div class="hero-grid"></div>
   <div class="hero-tag">Open source · UK visa tracker</div>
   <h1>Track your path to a<br><em>UK tech visa</em></h1>
-  <p>Compare visa routes, search licensed employers, and look up job codes — all from official gov.uk data. Built for tech and STEM professionals of any nationality.</p>
+  <p>Compare visa routes, search licensed employers, and look up job codes, all from official gov.uk data. Built for tech and STEM professionals of any nationality.</p>
   <div class="hero-actions">
-    <a href="/visas" class="btn-primary">Compare visa routes</a>
-    <a href="/sponsors" class="btn-outline">Find sponsors</a>
+    <a href="/wizard" class="btn-primary">Which visa fits me?</a>
+    <a href="/timeline" class="btn-outline">My timeline</a>
+    <a href="/visas" class="btn-outline">Compare routes</a>
   </div>
   <div class="hero-stats">
     <div class="stat-item"><div class="num">{{.RouteCount}}</div><div class="lbl">Visa routes tracked</div></div>
@@ -21,7 +22,7 @@
       <div class="card-title">Visa routes</div>
       <div class="card-badge">live</div>
     </div>
-    <p class="chart-caption">Bar length shows minimum salary required — longer bar means a higher threshold. Routes with no minimum show a short bar.</p>
+    <p class="chart-caption">Bar length shows minimum salary required. Longer bar means a higher threshold. Routes with no minimum show a short bar.</p>
     <div class="visa-bars">
       {{range .Routes}}
       <div class="visa-row">
@@ -45,6 +46,16 @@
       <div class="card-title">Quick links</div>
     </div>
     <div class="detail-grid">
+      <a href="/wizard" class="detail-item detail-link">
+        <div class="di-label">Visa wizard</div>
+        <div class="di-value green">Which route fits me?</div>
+        <div class="di-note">Answer 4 questions for personalised suggestions</div>
+      </a>
+      <a href="/timeline" class="detail-item detail-link">
+        <div class="di-label">My timeline</div>
+        <div class="di-value green">Visa &amp; ILR countdown</div>
+        <div class="di-note">Track expiry dates. Saved in your browser only.</div>
+      </a>
       <a href="/sponsors" class="detail-item detail-link">
         <div class="di-label">Find sponsors</div>
         <div class="di-value green">{{.SponsorCount}} licensed employers</div>

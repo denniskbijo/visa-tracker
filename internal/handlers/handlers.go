@@ -51,6 +51,9 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("/sponsors/results", h.handleSponsorResults)
 	mux.HandleFunc("/soc", h.handleSOC)
 	mux.HandleFunc("/soc/results", h.handleSOCResults)
+	mux.HandleFunc("/wizard", h.handleWizard)
+	mux.HandleFunc("/wizard/results", h.handleWizardResults)
+	mux.HandleFunc("/timeline", h.handleTimeline)
 
 	mux.HandleFunc("/api/v1/visas", h.apiRate.middleware(h.handleAPIVisas))
 	mux.HandleFunc("/api/v1/sponsors", h.apiRate.middleware(h.handleAPISponsors))
@@ -68,6 +71,8 @@ func (h *Handler) loadTemplates() {
 		"visa_detail.html",
 		"sponsor_search.html",
 		"soc_lookup.html",
+		"wizard.html",
+		"timeline.html",
 	}
 
 	for _, page := range pages {
@@ -84,7 +89,7 @@ func (h *Handler) loadTemplates() {
 	}
 
 	// standalone partials for HTMX responses
-	for _, partial := range []string{"sponsor_results.html", "soc_results.html"} {
+	for _, partial := range []string{"sponsor_results.html", "soc_results.html", "wizard_results.html"} {
 		partialPath := filepath.Join(h.cfg.TemplatesDir, "partials", partial)
 		t, err := template.New("").Funcs(funcMap).ParseFiles(partialPath)
 		if err != nil {

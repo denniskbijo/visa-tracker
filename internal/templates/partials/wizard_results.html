@@ -1,0 +1,38 @@
+{{define "wizard_results"}}
+{{if .Recommendations}}
+<div class="card" style="margin-top:16px">
+  <div class="card-header">
+    <div class="card-title">Recommended routes</div>
+    <div class="card-badge">{{len .Recommendations}} matches</div>
+  </div>
+  <p class="chart-caption">These are suggestions based on your answers. Always verify eligibility on gov.uk before applying.</p>
+  <div class="detail-grid">
+    {{range .Recommendations}}
+    <div class="detail-item rec-item rec-{{.Match}}">
+      <div class="rec-header">
+        <div class="di-label">{{.Route.Name}}</div>
+        <span class="tag {{if eq .Match "high"}}tag-green{{else if eq .Match "medium"}}tag-blue{{else}}tag{{end}}">{{.Match}} match</span>
+      </div>
+      <div class="di-value green">{{.Route.ThresholdPounds}} / yr{{if eq .Route.ThresholdPounds "None"}} minimum{{end}}</div>
+      <ul class="rec-reasons">
+        {{range .Reasons}}
+        <li>{{.}}</li>
+        {{end}}
+      </ul>
+      <a href="/visas/{{.Route.Slug}}" class="btn-outline btn-sm">View route details</a>
+    </div>
+    {{end}}
+  </div>
+  <div class="wizard-actions-secondary">
+    <a href="/sponsors" class="btn-outline btn-sm">Search sponsors</a>
+    <a href="/timeline" class="btn-outline btn-sm">Track my timeline</a>
+  </div>
+</div>
+{{else}}
+<div class="card empty-state" style="margin-top:16px">
+  <p class="empty-title">No strong matches found</p>
+  <p class="empty-hint">Try adjusting your answers, or browse all routes to explore options.</p>
+  <a href="/visas" class="btn-primary" style="margin-top:12px">Compare all visa routes</a>
+</div>
+{{end}}
+{{end}}
