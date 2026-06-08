@@ -30,6 +30,50 @@
   {{end}}
 </div>
 
+{{if .Route.SalaryThreshold}}
+<div class="card" style="margin-bottom:16px">
+  <div class="card-header">
+    <div class="card-title">Eligibility checker</div>
+  </div>
+  <p class="chart-caption">Enter your offered salary and <span class="glossary" tabindex="0">SOC code<span class="glossary-tip">Standard Occupational Classification: the official code the Home Office uses for your job role.</span></span> to see if you meet the salary threshold for this route.</p>
+
+  <form class="eligibility-form"
+    hx-get="/visas/{{.Route.Slug}}/check"
+    hx-target="#eligibility-result"
+    hx-trigger="change delay:300ms from:.eligibility-input, submit"
+    hx-indicator="#eligibility-loading">
+    <div class="eligibility-fields">
+      <div class="eligibility-field">
+        <label class="field-label" for="salary">Annual salary</label>
+        <div class="wizard-salary">
+          <span class="wizard-currency">£</span>
+          <input type="number" id="salary" name="salary" class="search-input eligibility-input" placeholder="e.g. 45000" min="0" step="1000" />
+        </div>
+      </div>
+      <div class="eligibility-field">
+        <label class="field-label" for="soc">SOC code</label>
+        <input type="text" id="soc" name="soc" class="search-input eligibility-input" placeholder="e.g. 2136" list="soc-codes" autocomplete="off" maxlength="4" pattern="[0-9]{4}" />
+        <datalist id="soc-codes">
+          {{range .SOCCodes}}
+          <option value="{{.Code}}">{{.Title}}</option>
+          {{end}}
+        </datalist>
+      </div>
+      <button type="submit" class="btn-primary">Check</button>
+    </div>
+  </form>
+  <div id="eligibility-loading" class="htmx-indicator">Checking eligibility...</div>
+  <div id="eligibility-result"></div>
+</div>
+{{else}}
+<div class="card" style="margin-bottom:16px">
+  <div class="card-header">
+    <div class="card-title">Eligibility checker</div>
+  </div>
+  <p class="chart-caption">This route has no salary threshold. Salary eligibility does not apply.</p>
+</div>
+{{end}}
+
 {{if .Thresholds}}
 <div class="card" style="margin-bottom:16px">
   <div class="card-header">

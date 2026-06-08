@@ -89,7 +89,7 @@ func (h *Handler) loadTemplates() {
 	}
 
 	// standalone partials for HTMX responses
-	for _, partial := range []string{"sponsor_results.html", "soc_results.html", "wizard_results.html"} {
+	for _, partial := range []string{"sponsor_results.html", "soc_results.html", "wizard_results.html", "eligibility_result.html"} {
 		partialPath := filepath.Join(h.cfg.TemplatesDir, "partials", partial)
 		t, err := template.New("").Funcs(funcMap).ParseFiles(partialPath)
 		if err != nil {

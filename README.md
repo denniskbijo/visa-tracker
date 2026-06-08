@@ -7,6 +7,9 @@ Built with Go, SQLite (pure Go), and HTMX. No JavaScript frameworks. No CGO. Sin
 ## Features
 
 - **Visa Route Dashboard**: compare 6 UK work visa routes side-by-side (Skilled Worker, Global Talent, HPI, Scale-up, ICT, Graduate) with salary thresholds, processing times, and eligibility at a glance
+- **Eligibility Checker**: on each visa detail page, enter salary and SOC code to see green/amber/red vs the route threshold (`/visas/{slug}`)
+- **Visa Wizard**: answer a few questions and get ranked route suggestions with plain-English reasons (`/wizard`)
+- **Personal Timeline**: track visa expiry and ILR countdown in your browser, no account needed (`/timeline`)
 - **Sponsor Search**: full-text search across 140k+ employers from the [gov.uk Register of Licensed Sponsors](https://www.gov.uk/government/publications/register-of-licensed-sponsors-workers), filterable by city and route
 - **SOC Code Lookup**: find your Standard Occupational Classification code, its going-rate salary, and whether it's on the Immigration Salary List
 - **JSON API**: programmatic access at `/api/v1/visas`, `/api/v1/sponsors?q=`, `/api/v1/soc?q=`
@@ -62,6 +65,8 @@ internal/
   store/                SQLite persistence layer (pure Go via modernc.org/sqlite)
   ingest/               YAML seed loader, gov.uk CSV downloader, refresh scheduler
   handlers/             HTTP handlers for HTML pages and /api/v1/ JSON endpoints
+  wizard/               Visa wizard recommendation logic
+  eligibility/          Salary vs threshold checker (green/amber/red)
   templates/            Go html/template files with HTMX partials
     partials/           HTMX partial templates for live search results
 
@@ -99,16 +104,55 @@ curl "http://localhost:8080/api/v1/sponsors?q=&route=Skilled+Worker&city=London"
 curl "http://localhost:8080/api/v1/soc?q=security"
 ```
 
+## Roadmap
+
+### Recently shipped
+
+| Feature | Description |
+|---|---|
+| Eligibility checker | Enter salary + SOC on a visa page; green/amber/red vs threshold, with ISL hints |
+| Visa wizard | Ranked route suggestions from a short questionnaire (`/wizard`) |
+| Personal timeline | Visa expiry and ILR countdown in localStorage (`/timeline`) |
+
+### Next up (high value)
+
+| Feature | Description |
+|---|---|
+| Route comparison table | Select 2–3 routes and compare sponsor, salary, duration, and ILR path side by side |
+| Expand SOC codes | Grow beyond the initial 17 tech/STEM codes in `data/soc_codes.yaml` |
+| Salary calculator | Job title → SOC match → minimum salary vs your offer |
+
+### Data and automation
+
+| Feature | Description |
+|---|---|
+| Processing times scraper | Auto-fetch gov.uk processing times instead of manual YAML snapshots |
+| Policy change alerts | Banner when thresholds or rules change after ingest |
+| Richer sponsor context | Explain ratings, link to gov.uk, suggest next steps after a search |
+
+### Growth and polish
+
+| Feature | Description |
+|---|---|
+| Smarter timeline | Multi-visa history, route switches, more accurate ILR rules |
+| Country-specific guides | Community-contributed paths (e.g. coming from India, US, EU) |
+| Onboarding tour | First-visit walkthrough: job code → salary → sponsors |
+| Mobile polish | Improve tables and comparison views on small screens |
+| Test coverage | Handlers, store, and ingest tests beyond wizard logic |
+| Content-Security-Policy header | Extra XSS defence alongside template auto-escaping |
+
+### Infrastructure
+
+| Item | Description |
+|---|---|
+| Pin gosec to a release tag | CI currently uses `@master` |
+| Upgrade CodeQL action to v4 | Deprecation warning in security workflow |
+
+Suggested build order: expand SOC codes → route comparison → salary calculator → processing times scraper → test coverage.
+
 ## Contributing
 
-Contributions welcome. Areas that need help:
-
-- Expanding SOC codes beyond the initial tech/STEM set
-- Automated gov.uk processing times scraper
-- Community-contributed country-specific guides
-- ILR countdown / personal visa timeline tracker
-- Mobile-responsive design improvements
-- Test coverage
+Contributions welcome. Pick an item from the [Roadmap](#roadmap) above, or open an issue to discuss something new. See [AGENTS.md](AGENTS.md) for repo conventions.
 
 ## License
 

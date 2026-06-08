@@ -46,6 +46,7 @@ Go binary path: `~/.local/go/bin` (add to PATH if `go` not found).
 | `cmd/server/` | Entry point |
 | `internal/handlers/` | HTTP handlers (HTML + `/api/v1/*`) |
 | `internal/wizard/` | Visa wizard recommendation logic |
+| `internal/eligibility/` | Salary vs threshold checker on visa detail pages |
 | `internal/templates/` | Go html/template pages and HTMX partials |
 | `internal/store/` | SQLite persistence |
 | `internal/ingest/` | YAML seed + gov.uk CSV ingest |
@@ -72,7 +73,7 @@ Go binary path: `~/.local/go/bin` (add to PATH if `go` not found).
 - Live search (HTMX debounced) on sponsor/SOC pages.
 - Helpful empty states with example chips.
 - Skilled Worker threshold from DB, not hardcoded in templates.
-- Visa wizard at `/wizard`; personal timeline at `/timeline`.
+- Visa wizard at `/wizard`; personal timeline at `/timeline`; eligibility checker on `/visas/{slug}`.
 
 ## Tests
 
@@ -83,3 +84,5 @@ gosec ./...
 ```
 
 Keep `govulncheck` clean; bump Go/stdlib deps when security CI flags issues.
+
+See [README.md](README.md#roadmap) for planned features and build order.

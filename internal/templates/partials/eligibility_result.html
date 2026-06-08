@@ -1,0 +1,53 @@
+{{define "eligibility_result"}}
+{{if ne .Result.Status "na"}}
+<div class="eligibility-result eligibility-{{.Result.Status}}">
+  <div class="eligibility-header">
+    <span class="eligibility-dot"></span>
+    <div>
+      <div class="eligibility-title">{{.Result.Title}}</div>
+      <div class="eligibility-message">{{.Result.Message}}</div>
+    </div>
+  </div>
+
+  <div class="eligibility-stats">
+    <div class="eligibility-stat">
+      <div class="es-label">Your salary</div>
+      <div class="es-value">{{.Result.SalaryDisplay}}</div>
+    </div>
+    <div class="eligibility-stat">
+      <div class="es-label">Required minimum</div>
+      <div class="es-value">{{.Result.RequiredPounds}}</div>
+    </div>
+    {{if .SOC}}
+    <div class="eligibility-stat">
+      <div class="es-label">SOC code</div>
+      <div class="es-value">{{.SOC.Code}} · {{.SOC.Title}}</div>
+    </div>
+    {{end}}
+    {{if gt .Result.ShortfallPence 0}}
+    <div class="eligibility-stat">
+      <div class="es-label">Shortfall</div>
+      <div class="es-value eligibility-shortfall">{{.Result.ShortfallPounds}}</div>
+    </div>
+    {{end}}
+  </div>
+
+  {{if .Result.Notes}}
+  <ul class="eligibility-notes">
+    {{range .Result.Notes}}
+    <li>{{.}}</li>
+    {{end}}
+  </ul>
+  {{end}}
+</div>
+{{else if .Result.Title}}
+<div class="eligibility-result eligibility-na">
+  <div class="eligibility-header">
+    <div>
+      <div class="eligibility-title">{{.Result.Title}}</div>
+      <div class="eligibility-message">{{.Result.Message}}</div>
+    </div>
+  </div>
+</div>
+{{end}}
+{{end}}

@@ -72,6 +72,24 @@ func (db *DB) InsertThreshold(t *models.SalaryThreshold) error {
 	return err
 }
 
+func (db *DB) LatestThresholdForSOC(visaRouteID int64, socCode string) (*models.SalaryThreshold, error) {
+	var t models.SalaryThreshold
+	err := db.conn.QueryRow(`
+		SELECT id, visa_route_id, soc_code, amount_pence, effective_date, notes, created_at
+		FROM salary_thresholds
+		WHERE visa_route_id = ? AND soc_code = ?
+		ORDER BY effective_date DESC
+		LIMIT 1`, visaRouteID, socCode).
+		Scan(&t.ID, &t.VisaRouteID, &t.SOCCode, &t.AmountPence, &t.EffectiveDate, &t.Notes, &t.CreatedAt)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &t, nil
+}
+
 func (db *DB) LatestThresholds(visaRouteID int64) ([]models.SalaryThreshold, error) {
 	rows, err := db.conn.Query(`
 		SELECT id, visa_route_id, soc_code, amount_pence, effective_date, notes, created_at
