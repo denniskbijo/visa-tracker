@@ -67,6 +67,10 @@
     var routes;
     try {
       routes = JSON.parse(dataEl.textContent);
+      if (typeof routes === 'string') {
+        routes = JSON.parse(routes);
+      }
+      if (!Array.isArray(routes)) return;
     } catch (e) {
       return;
     }

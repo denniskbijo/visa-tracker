@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"html/template"
 	"net/http"
 
 	"github.com/denniskbijo/visa-tracker/internal/models"
@@ -56,15 +57,15 @@ func (h *Handler) handleTimeline(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := struct {
-		Title         string
-		ActiveNav     string
-		Routes        []models.VisaRoute
-		RoutesJSON    string
+		Title      string
+		ActiveNav  string
+		Routes     []models.VisaRoute
+		RoutesJSON template.JS
 	}{
 		Title:      "My timeline",
 		ActiveNav:  "timeline",
 		Routes:     routes,
-		RoutesJSON: string(jsonData),
+		RoutesJSON: template.JS(jsonData),
 	}
 
 	h.render(w, "timeline.html", data)
