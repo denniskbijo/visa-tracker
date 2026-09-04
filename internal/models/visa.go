@@ -75,3 +75,11 @@ type SalaryThreshold struct {
 func (t SalaryThreshold) AmountPounds() string {
 	return formatPounds(t.AmountPence / 100)
 }
+
+func (t SalaryThreshold) EffectiveDateDisplay() string {
+	d := t.EffectiveDate
+	if len(d) >= 10 && d[4] == '-' {
+		return d[:10]
+	}
+	return d
+}

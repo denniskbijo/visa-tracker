@@ -28,7 +28,7 @@ func (h *Handler) handleHome(w http.ResponseWriter, r *http.Request) {
 		if t, _ := h.db.LatestGeneralThreshold(sw.ID); t != nil {
 			skilledWorkerNote = t.Notes
 			if t.EffectiveDate != "" {
-				skilledWorkerNote = t.Notes + " · effective " + t.EffectiveDate
+				skilledWorkerNote = t.Notes + " · effective " + t.EffectiveDateDisplay()
 			}
 		}
 	}
