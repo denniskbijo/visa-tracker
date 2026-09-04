@@ -51,6 +51,7 @@ Go binary path: `~/.local/go/bin` (add to PATH if `go` not found).
 | `internal/store/` | SQLite persistence |
 | `internal/ingest/` | YAML seed + gov.uk CSV ingest |
 | `data/` | YAML seed data and SQL migrations |
+| `LEDGER.md` | Remaining work; pick one item, ship it, mark it done |
 | `static/` | CSS, HTMX, `app.js` |
 
 ## Deploy
@@ -85,4 +86,4 @@ gosec ./...
 
 Keep `govulncheck` clean; bump Go/stdlib deps when security CI flags issues.
 
-See [README.md](README.md#roadmap) for planned features and build order.
+See [LEDGER.md](LEDGER.md) for remaining work. See [README.md](README.md#roadmap) for the public feature list.

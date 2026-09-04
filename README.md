@@ -29,7 +29,7 @@ make run
 Open http://localhost:8080. On first launch the server will:
 
 1. Create `visa-tracker.db` and run schema migrations
-2. Load 6 visa routes, salary thresholds, and 17 SOC codes from YAML seed data
+2. Load 6 visa routes, salary thresholds, and curated tech/STEM SOC codes from YAML seed data
 3. Download the latest licensed sponsors CSV from gov.uk (~140k records)
 
 For a **step-by-step local run checklist** (ports, curl checks, reset DB), see [LOCAL.md](LOCAL.md).
@@ -87,6 +87,7 @@ static/
 | [Register of Licensed Sponsors](https://www.gov.uk/government/publications/register-of-licensed-sponsors-workers) | 140k+ employer names, cities, routes, ratings | Weekly by Home Office |
 | [SOC 2020](https://www.ons.gov.uk/methodology/classificationsandstandards/standardoccupationalclassificationsoc/soc2020) | Standard Occupational Classification codes | Stable |
 | [Immigration Rules: Appendix Skilled Worker](https://www.gov.uk/guidance/immigration-rules/immigration-rules-appendix-skilled-worker) | Salary thresholds and going rates | On policy change |
+| [Appendix Skilled Occupations](https://www.gov.uk/guidance/immigration-rules/immigration-rules-appendix-skilled-occupations) | SOC 2020 codes and going rates | 22 July 2025 snapshot in `data/` |
 
 ## API Examples
 
@@ -148,7 +149,7 @@ curl "http://localhost:8080/api/v1/soc?q=security"
 | Pin gosec to a release tag | CI currently uses `@master` |
 | Upgrade CodeQL action to v4 | Deprecation warning in security workflow |
 
-Suggested build order: expand SOC codes → route comparison → salary calculator → processing times scraper → test coverage.
+Work from [LEDGER.md](LEDGER.md): one item at a time. Suggested next: blog post on this data refresh, then eligibility-rule extras, then route comparison.
 
 ## Contributing
 

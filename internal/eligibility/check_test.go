@@ -10,7 +10,7 @@ func swRoute() models.VisaRoute {
 	return models.VisaRoute{
 		Slug:            "skilled-worker",
 		Name:            "Skilled Worker",
-		SalaryThreshold: 3870000,
+		SalaryThreshold: 4170000,
 	}
 }
 
@@ -32,33 +32,33 @@ func TestCheck_missingSalary(t *testing.T) {
 }
 
 func TestCheck_meetsGeneralThreshold(t *testing.T) {
-	res := Check(Input{Route: swRoute(), SalaryPounds: 40000})
+	res := Check(Input{Route: swRoute(), SalaryPounds: 42000})
 	if res.Status != StatusGreen {
 		t.Fatalf("expected green, got %s", res.Status)
 	}
 }
 
 func TestCheck_belowGoingRate(t *testing.T) {
-	soc := &models.SOCCode{Code: "2133", GoingRatePence: 4500000}
-	res := Check(Input{Route: swRoute(), SalaryPounds: 40000, SOC: soc})
+	soc := &models.SOCCode{Code: "2134", GoingRatePence: 5470000}
+	res := Check(Input{Route: swRoute(), SalaryPounds: 45000, SOC: soc})
 	if res.Status != StatusRed {
 		t.Fatalf("expected red, got %s (required %d)", res.Status, res.RequiredPence)
 	}
-	if res.RequiredPence != 4500000 {
+	if res.RequiredPence != 5470000 {
 		t.Fatalf("expected going rate as required, got %d", res.RequiredPence)
 	}
 }
 
 func TestCheck_meetsGoingRate(t *testing.T) {
-	soc := &models.SOCCode{Code: "2133", GoingRatePence: 4500000}
-	res := Check(Input{Route: swRoute(), SalaryPounds: 45000, SOC: soc})
+	soc := &models.SOCCode{Code: "2134", GoingRatePence: 5470000}
+	res := Check(Input{Route: swRoute(), SalaryPounds: 54700, SOC: soc})
 	if res.Status != StatusGreen {
 		t.Fatalf("expected green, got %s", res.Status)
 	}
 }
 
 func TestCheck_closeToThreshold(t *testing.T) {
-	res := Check(Input{Route: swRoute(), SalaryPounds: 38500})
+	res := Check(Input{Route: swRoute(), SalaryPounds: 41000})
 	if res.Status != StatusAmber {
 		t.Fatalf("expected amber, got %s", res.Status)
 	}
@@ -66,18 +66,30 @@ func TestCheck_closeToThreshold(t *testing.T) {
 
 func TestCheck_islReducedThreshold(t *testing.T) {
 	soc := &models.SOCCode{
-		Code:                   "2139",
-		GoingRatePence:         3870000,
+		Code:                    "2112",
+		GoingRatePence:          4030000,
 		OnImmigrationSalaryList: true,
 	}
-	res := Check(Input{Route: swRoute(), SalaryPounds: 32000, SOC: soc})
+	res := Check(Input{Route: swRoute(), SalaryPounds: 40300, SOC: soc})
 	if res.Status != StatusAmber || res.Title != "May qualify via ISL" {
 		t.Fatalf("expected ISL amber, got %+v", res)
 	}
 }
 
+func TestCheck_islStillNeedsGoingRate(t *testing.T) {
+	soc := &models.SOCCode{
+		Code:                    "2112",
+		GoingRatePence:          4030000,
+		OnImmigrationSalaryList: true,
+	}
+	res := Check(Input{Route: swRoute(), SalaryPounds: 35000, SOC: soc})
+	if res.Status != StatusRed {
+		t.Fatalf("expected red below ISL going rate, got %+v", res)
+	}
+}
+
 func TestCheck_unknownSOCUsesGeneral(t *testing.T) {
-	res := Check(Input{Route: swRoute(), SalaryPounds: 40000, SOCCodeProvided: "9999"})
+	res := Check(Input{Route: swRoute(), SalaryPounds: 42000, SOCCodeProvided: "9999"})
 	if res.Status != StatusGreen {
 		t.Fatalf("expected green with general threshold, got %s", res.Status)
 	}

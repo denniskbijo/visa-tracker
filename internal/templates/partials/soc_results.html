@@ -29,14 +29,14 @@
           <div class="empty-state inline">
             {{if .Query}}
             <p class="empty-title">No job codes found for "{{.Query}}"</p>
-            <p class="empty-hint">Try a job title like "developer" or a code like "2136".</p>
+            <p class="empty-hint">Try a job title like "developer" or a code like "2134".</p>
             {{else}}
             <p class="empty-title">Browse tech and STEM job codes</p>
             <p class="empty-hint">Search by job title or SOC code to filter the list below.</p>
             <div class="empty-examples">
               <span class="empty-label">Try:</span>
               <button type="button" class="example-chip" hx-get="/soc/results?q=software" hx-target="#soc-results" hx-indicator="#soc-loading">software</button>
-              <button type="button" class="example-chip" hx-get="/soc/results?q=2136" hx-target="#soc-results" hx-indicator="#soc-loading">2136</button>
+              <button type="button" class="example-chip" hx-get="/soc/results?q=2134" hx-target="#soc-results" hx-indicator="#soc-loading">2134</button>
               <button type="button" class="example-chip" hx-get="/soc/results?q=data" hx-target="#soc-results" hx-indicator="#soc-loading">data</button>
             </div>
             {{end}}

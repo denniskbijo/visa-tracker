@@ -50,9 +50,9 @@ func Recommend(input Input, routes []models.VisaRoute) []Recommendation {
 	hasOffer := input.JobOffer == "yes"
 	hasSponsor := input.Sponsor == "yes"
 	salary := input.Salary
-	meetsSW := salary >= 38700 || salary == 0
-	meetsScaleUp := salary >= 36300 || salary == 0
-	meetsICT := salary >= 48200
+	meetsSW := meetsRouteThreshold(bySlug["skilled-worker"], salary)
+	meetsScaleUp := meetsRouteThreshold(bySlug["scale-up"], salary)
+	meetsICT := salary > 0 && meetsRouteThreshold(bySlug["intra-company-transfer"], salary)
 
 	switch {
 	case !hasOffer && input.Background == "uk_graduate":
@@ -64,7 +64,7 @@ func Recommend(input Input, routes []models.VisaRoute) []Recommendation {
 
 	case !hasOffer && input.Background == "top_university":
 		add("high-potential-individual", MatchHigh,
-			"Graduates of eligible top global universities can work in the UK for 2 years without a job offer or sponsor.",
+			"Graduates of eligible top global universities can work in the UK for 2 years (3 years with a PhD) without a job offer or sponsor.",
 			"Plan to switch to Skilled Worker or Global Talent before it expires. HPI cannot be extended.")
 		add("global-talent", MatchMedium,
 			"If you have exceptional talent in tech or STEM, endorsement may be possible without a job offer.")
@@ -84,18 +84,18 @@ func Recommend(input Input, routes []models.VisaRoute) []Recommendation {
 				thresholdReason(bySlug["skilled-worker"], salary))
 		} else {
 			add("skilled-worker", MatchLow,
-				"You have a sponsor, but your salary may be below the £38,700 general threshold.",
+				"You have a sponsor, but your salary may be below the "+bySlug["skilled-worker"].ThresholdPounds()+" general threshold.",
 				"Check the going rate for your SOC code. Some roles have different minimums.")
 		}
 		if salary == 0 || meetsScaleUp {
 			add("scale-up", MatchMedium,
-				"Qualifying high-growth companies can sponsor on a slightly lower threshold (£36,300).",
+				"Qualifying high-growth companies can sponsor on a slightly lower threshold ("+bySlug["scale-up"].ThresholdPounds()+").",
 				"Sponsor required for the first 6 months, then you can change employers freely.")
 		}
 		if meetsICT {
 			add("intra-company-transfer", MatchMedium,
 				"Suitable if your employer is transferring you from an overseas branch.",
-				"Higher salary threshold (£48,200), typically for senior or specialist roles.")
+				"Higher salary threshold ("+bySlug["intra-company-transfer"].ThresholdPounds()+"), typically for senior or specialist roles.")
 		}
 
 	case hasOffer && input.Sponsor == "unsure":
@@ -119,6 +119,16 @@ func Recommend(input Input, routes []models.VisaRoute) []Recommendation {
 	recs = dedupeBest(recs)
 	sortRecs(recs)
 	return recs
+}
+
+func meetsRouteThreshold(r models.VisaRoute, salary int64) bool {
+	if salary == 0 {
+		return true
+	}
+	if r.SalaryThreshold <= 0 {
+		return true
+	}
+	return salary >= r.SalaryThreshold/100
 }
 
 func thresholdReason(r models.VisaRoute, salary int64) string {

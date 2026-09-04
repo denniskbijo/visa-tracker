@@ -25,8 +25,7 @@ func (h *Handler) handleHome(w http.ResponseWriter, r *http.Request) {
 	var skilledWorkerNote string
 	if sw, _ := h.db.GetVisaRouteBySlug("skilled-worker"); sw != nil {
 		skilledWorker = sw
-		if thresholds, _ := h.db.LatestThresholds(sw.ID); len(thresholds) > 0 {
-			t := thresholds[0]
+		if t, _ := h.db.LatestGeneralThreshold(sw.ID); t != nil {
 			skilledWorkerNote = t.Notes
 			if t.EffectiveDate != "" {
 				skilledWorkerNote = t.Notes + " · effective " + t.EffectiveDate

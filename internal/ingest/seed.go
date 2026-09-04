@@ -150,6 +150,7 @@ func (ing *Ingester) loadSOCCodes() error {
 		return fmt.Errorf("parse soc_codes.yaml: %w", err)
 	}
 
+	keep := make([]string, 0, len(f.SOCCodes))
 	for _, s := range f.SOCCodes {
 		code := &models.SOCCode{
 			Code:                    s.Code,
@@ -161,6 +162,10 @@ func (ing *Ingester) loadSOCCodes() error {
 		if err := ing.db.UpsertSOCCode(code); err != nil {
 			return fmt.Errorf("upsert soc code %s: %w", s.Code, err)
 		}
+		keep = append(keep, s.Code)
+	}
+	if err := ing.db.DeleteSOCCodesNotIn(keep); err != nil {
+		return fmt.Errorf("remove stale soc codes: %w", err)
 	}
 	log.Printf("loaded %d SOC codes", len(f.SOCCodes))
 

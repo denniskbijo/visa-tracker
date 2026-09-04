@@ -52,7 +52,7 @@
       </div>
       <div class="eligibility-field">
         <label class="field-label" for="soc">SOC code</label>
-        <input type="text" id="soc" name="soc" class="search-input eligibility-input" placeholder="e.g. 2136" list="soc-codes" autocomplete="off" maxlength="4" pattern="[0-9]{4}" />
+        <input type="text" id="soc" name="soc" class="search-input eligibility-input" placeholder="e.g. 2134" list="soc-codes" autocomplete="off" maxlength="4" pattern="[0-9]{4}" />
         <datalist id="soc-codes">
           {{range .SOCCodes}}
           <option value="{{.Code}}">{{.Title}}</option>

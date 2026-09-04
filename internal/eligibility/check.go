@@ -14,8 +14,7 @@ const (
 )
 
 const (
-	islFloorPence    int64 = 3096000 // £30,960 ISL minimum
-	islRatePercent   int64 = 80
+	islFloorPence    int64 = 3340000 // £33,400 ISL general threshold (from 22 Jul 2025)
 	amberMarginPence int64 = 300000  // £3,000
 	amberMarginPct   int64 = 10
 )
@@ -106,14 +105,14 @@ func Check(in Input) Result {
 
 	if in.Route.Slug == "skilled-worker" && in.SOC != nil && in.SOC.OnImmigrationSalaryList {
 		islRequired := islFloorPence
-		if reduced := in.SOC.GoingRatePence * islRatePercent / 100; reduced > islRequired {
-			islRequired = reduced
+		if in.SOC.GoingRatePence > islRequired {
+			islRequired = in.SOC.GoingRatePence
 		}
 		if salaryPence >= islRequired {
 			res.Status = StatusAmber
 			res.Title = "May qualify via ISL"
-			res.Message = "Your salary is below the standard going rate but may qualify under the Immigration Salary List at a reduced threshold."
-			res.Notes = append(res.Notes, "Confirm ISL eligibility and exact rules on gov.uk before applying.")
+			res.Message = "Your salary is below the standard general threshold but may qualify on the Immigration Salary List. ISL still requires the full going rate for the job."
+			res.Notes = append(res.Notes, "Confirm the role is on the current Immigration Salary List on gov.uk before applying.")
 			return res
 		}
 	}

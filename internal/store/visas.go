@@ -64,12 +64,43 @@ func (db *DB) GetVisaRouteBySlug(slug string) (*models.VisaRoute, error) {
 }
 
 func (db *DB) InsertThreshold(t *models.SalaryThreshold) error {
-	_, err := db.conn.Exec(`
+	var existing int64
+	err := db.conn.QueryRow(`
+		SELECT id FROM salary_thresholds
+		WHERE visa_route_id = ? AND soc_code = ? AND amount_pence = ? AND effective_date = ?
+		LIMIT 1`,
+		t.VisaRouteID, t.SOCCode, t.AmountPence, t.EffectiveDate,
+	).Scan(&existing)
+	if err == nil {
+		return nil
+	}
+	if err != sql.ErrNoRows {
+		return err
+	}
+	_, err = db.conn.Exec(`
 		INSERT INTO salary_thresholds (visa_route_id, soc_code, amount_pence, effective_date, notes)
 		VALUES (?, ?, ?, ?, ?)`,
 		t.VisaRouteID, t.SOCCode, t.AmountPence, t.EffectiveDate, t.Notes,
 	)
 	return err
+}
+
+func (db *DB) LatestGeneralThreshold(visaRouteID int64) (*models.SalaryThreshold, error) {
+	var t models.SalaryThreshold
+	err := db.conn.QueryRow(`
+		SELECT id, visa_route_id, soc_code, amount_pence, effective_date, notes, created_at
+		FROM salary_thresholds
+		WHERE visa_route_id = ? AND (soc_code = '' OR soc_code IS NULL)
+		ORDER BY effective_date DESC
+		LIMIT 1`, visaRouteID).
+		Scan(&t.ID, &t.VisaRouteID, &t.SOCCode, &t.AmountPence, &t.EffectiveDate, &t.Notes, &t.CreatedAt)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &t, nil
 }
 
 func (db *DB) LatestThresholdForSOC(visaRouteID int64, socCode string) (*models.SalaryThreshold, error) {

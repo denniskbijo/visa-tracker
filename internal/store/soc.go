@@ -3,6 +3,7 @@ package store
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"github.com/denniskbijo/visa-tracker/internal/models"
 )
@@ -19,6 +20,22 @@ func (db *DB) UpsertSOCCode(s *models.SOCCode) error {
 			updated_at = CURRENT_TIMESTAMP`,
 		s.Code, s.Title, s.Description, s.GoingRatePence, boolToInt(s.OnImmigrationSalaryList),
 	)
+	return err
+}
+
+func (db *DB) DeleteSOCCodesNotIn(codes []string) error {
+	if len(codes) == 0 {
+		_, err := db.conn.Exec(`DELETE FROM soc_codes`)
+		return err
+	}
+	placeholders := make([]string, len(codes))
+	args := make([]interface{}, len(codes))
+	for i, c := range codes {
+		placeholders[i] = "?"
+		args[i] = c
+	}
+	q := `DELETE FROM soc_codes WHERE code NOT IN (` + strings.Join(placeholders, ",") + `)`
+	_, err := db.conn.Exec(q, args...)
 	return err
 }
 

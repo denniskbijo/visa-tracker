@@ -8,7 +8,7 @@
   </div>
 
   <form class="search-box" hx-get="/soc/results" hx-target="#soc-results" hx-trigger="keyup changed delay:300ms from:.search-input, submit" hx-indicator="#soc-loading">
-    <input type="text" name="q" class="search-input" placeholder="e.g. software developer, 2136, data scientist..." value="{{.Query}}" autocomplete="off" />
+    <input type="text" name="q" class="search-input" placeholder="e.g. software developer, 2134, data scientist..." value="{{.Query}}" autocomplete="off" />
     <button type="submit" class="btn-primary">Search</button>
   </form>
   <div id="soc-loading" class="htmx-indicator">Searching job codes...</div>

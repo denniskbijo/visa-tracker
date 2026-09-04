@@ -1,102 +1,164 @@
+# Going rates from Immigration Rules Appendix Skilled Occupations Table 1
+# (22 July 2025 update, 37.5-hour week). ISL flags from Appendix Immigration Salary List.
 soc_codes:
+  - code: "1137"
+    title: "Information technology directors"
+    description: "Direct IT, information security, and technology programmes at director level."
+    going_rate_pence: 8600000
+    on_immigration_salary_list: false
+
+  - code: "2131"
+    title: "IT project managers"
+    description: "Plan and oversee IT projects, managing budgets, timelines and resources."
+    going_rate_pence: 5820000
+    on_immigration_salary_list: false
+
+  - code: "2132"
+    title: "IT managers"
+    description: "Manage IT services, products, networks, software development teams, or technical support."
+    going_rate_pence: 5500000
+    on_immigration_salary_list: false
+
   - code: "2133"
-    title: "IT specialist managers"
-    description: "Plan, organise and co-ordinate the operations of IT systems and infrastructure."
-    going_rate_pence: 4500000
+    title: "IT business analysts, architects and systems designers"
+    description: "Analyse requirements and design systems. Includes data architects and data engineers."
+    going_rate_pence: 5490000
     on_immigration_salary_list: false
 
   - code: "2134"
-    title: "IT project and programme managers"
-    description: "Plan and oversee IT projects, managing budgets, timelines and resources."
-    going_rate_pence: 4100000
+    title: "Programmers and software development professionals"
+    description: "Design, write, test and maintain software. Includes software developers and games designers."
+    going_rate_pence: 5470000
     on_immigration_salary_list: false
 
   - code: "2135"
-    title: "IT business analysts, architects and systems designers"
-    description: "Analyse business requirements and design IT solutions and system architectures."
-    going_rate_pence: 3870000
+    title: "Cyber security professionals"
+    description: "Defend systems, govern security, and develop secure software. Includes forensic specialists."
+    going_rate_pence: 4850000
     on_immigration_salary_list: false
 
   - code: "2136"
-    title: "Programmers and software development professionals"
-    description: "Design, write, test and maintain software programs and applications."
-    going_rate_pence: 4000000
+    title: "IT quality and testing professionals"
+    description: "Plan and run IT quality assurance and software testing (professional level, not technician testers)."
+    going_rate_pence: 4120000
     on_immigration_salary_list: false
 
   - code: "2137"
-    title: "Web design professionals"
-    description: "Design and build websites and web applications using front-end and back-end technologies."
-    going_rate_pence: 3870000
+    title: "IT network professionals"
+    description: "Design and maintain professional-level IT networks and connectivity."
+    going_rate_pence: 4560000
     on_immigration_salary_list: false
 
   - code: "2139"
     title: "Information technology professionals n.e.c."
-    description: "IT professionals not elsewhere classified, including cyber security analysts, DevOps engineers, data engineers, and cloud specialists."
-    going_rate_pence: 3870000
+    description: "IT professionals not elsewhere classified, including DevOps engineers and IT consultants."
+    going_rate_pence: 5230000
+    on_immigration_salary_list: false
+
+  - code: "2141"
+    title: "Web design professionals"
+    description: "Design websites and applications. Includes UI and UX designers and researchers."
+    going_rate_pence: 4380000
+    on_immigration_salary_list: false
+
+  - code: "2142"
+    title: "Graphic and multimedia designers"
+    description: "Create graphic and multimedia design. On the Immigration Salary List (reduced general threshold)."
+    going_rate_pence: 3340000
     on_immigration_salary_list: true
 
-  - code: "2425"
-    title: "Actuaries, economists and statisticians"
-    description: "Compile and analyse data, apply mathematical and statistical techniques."
-    going_rate_pence: 4100000
+  - code: "2112"
+    title: "Biological scientists"
+    description: "Research in biology and related life sciences. On the Immigration Salary List (reduced general threshold)."
+    going_rate_pence: 4030000
+    on_immigration_salary_list: true
+
+  - code: "2114"
+    title: "Physical scientists"
+    description: "Research in geology, geophysics, meteorology and related physical sciences."
+    going_rate_pence: 5460000
+    on_immigration_salary_list: false
+
+  - code: "2123"
+    title: "Electrical engineers"
+    description: "Design and develop electrical power systems, railway signalling, and related systems."
+    going_rate_pence: 5870000
+    on_immigration_salary_list: false
+
+  - code: "2124"
+    title: "Electronics engineers"
+    description: "Design electronic and telecommunications systems (professional level)."
+    going_rate_pence: 5200000
+    on_immigration_salary_list: false
+
+  - code: "2125"
+    title: "Production and process engineers"
+    description: "Plan production processes, including chemical, control, and industrial engineering."
+    going_rate_pence: 4500000
     on_immigration_salary_list: false
 
   - code: "2126"
-    title: "Design and development engineers"
-    description: "Research and develop new products, equipment and processes."
-    going_rate_pence: 3870000
+    title: "Aerospace engineers"
+    description: "Design and develop aircraft, avionics, and related aerospace systems."
+    going_rate_pence: 5240000
     on_immigration_salary_list: false
 
   - code: "2127"
-    title: "Production and process engineers"
-    description: "Plan and design production processes and oversee manufacturing systems."
-    going_rate_pence: 3870000
+    title: "Engineering project managers and project engineers"
+    description: "Lead engineering projects and coordinate technical delivery."
+    going_rate_pence: 5190000
     on_immigration_salary_list: false
 
   - code: "2129"
     title: "Engineering professionals n.e.c."
-    description: "Engineering professionals not elsewhere classified."
-    going_rate_pence: 3870000
+    description: "Engineering professionals not elsewhere classified, including robotics and biomedical engineers."
+    going_rate_pence: 4610000
     on_immigration_salary_list: false
 
-  - code: "2142"
+  - code: "2152"
     title: "Environment professionals"
-    description: "Study, advise and report on effects of human activity on the environment."
-    going_rate_pence: 3870000
+    description: "Advise on environmental impact, sustainability, and geo-environmental engineering."
+    going_rate_pence: 3720000
     on_immigration_salary_list: false
 
-  - code: "2150"
-    title: "Research and development managers"
-    description: "Plan, direct and co-ordinate R&D activities in science, engineering and technology."
-    going_rate_pence: 4500000
-    on_immigration_salary_list: false
-
-  - code: "2311"
-    title: "Higher education teaching professionals"
-    description: "Teach and research at university level in STEM and other subjects."
-    going_rate_pence: 3870000
+  - code: "2161"
+    title: "Research and development (R&D) managers"
+    description: "Plan and direct R&D in science, engineering and technology."
+    going_rate_pence: 5440000
     on_immigration_salary_list: false
 
   - code: "2162"
     title: "Other researchers, unspecified discipline"
     description: "Conduct research across disciplines not elsewhere classified."
-    going_rate_pence: 3870000
+    going_rate_pence: 4360000
     on_immigration_salary_list: false
 
-  - code: "2461"
+  - code: "2311"
+    title: "Higher education teaching professionals"
+    description: "Teach and research at university level in STEM and other subjects."
+    going_rate_pence: 5260000
+    on_immigration_salary_list: false
+
+  - code: "2433"
+    title: "Actuaries, economists and statisticians"
+    description: "Apply maths and statistics. Includes statistical data scientists."
+    going_rate_pence: 5510000
+    on_immigration_salary_list: false
+
+  - code: "2481"
     title: "Quality control and planning engineers"
-    description: "Establish standards, procedures and test methods for quality assurance."
-    going_rate_pence: 3870000
+    description: "Set standards, procedures and test methods for quality and production planning."
+    going_rate_pence: 4130000
     on_immigration_salary_list: false
 
   - code: "3131"
     title: "IT operations technicians"
-    description: "Provide technical support for IT systems, networks and infrastructure."
-    going_rate_pence: 3100000
+    description: "Medium-skilled support roles (sysadmin, QA testers, software technicians). New Skilled Worker applications usually need the Temporary Shortage List or an existing visa on this code."
+    going_rate_pence: 3520000
     on_immigration_salary_list: false
 
   - code: "3132"
     title: "IT user support technicians"
-    description: "Provide help-desk and technical support to IT users."
-    going_rate_pence: 2660000
+    description: "Medium-skilled help-desk and user support. New Skilled Worker applications usually need the Temporary Shortage List or an existing visa on this code."
+    going_rate_pence: 3340000
     on_immigration_salary_list: false
