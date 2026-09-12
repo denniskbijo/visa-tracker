@@ -1,0 +1,19 @@
+{{define "content"}}
+<p class="page-intro">Notes on UK tech visa data, written when we change the numbers in this tool.</p>
+
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">Blog</div>
+    <div class="card-badge">{{len .Posts}} posts</div>
+  </div>
+  <div class="detail-grid">
+    {{range .Posts}}
+    <a href="/blog/{{.Slug}}" class="detail-item detail-link">
+      <div class="di-label">{{.Date}}</div>
+      <div class="di-value">{{.Title}}</div>
+      <div class="di-note">{{.Summary}}</div>
+    </a>
+    {{end}}
+  </div>
+</div>
+{{end}}

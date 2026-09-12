@@ -54,6 +54,8 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("/wizard", h.handleWizard)
 	mux.HandleFunc("/wizard/results", h.handleWizardResults)
 	mux.HandleFunc("/timeline", h.handleTimeline)
+	mux.HandleFunc("/blog", h.handleBlog)
+	mux.HandleFunc("/blog/", h.handleBlog)
 
 	mux.HandleFunc("/api/v1/visas", h.apiRate.middleware(h.handleAPIVisas))
 	mux.HandleFunc("/api/v1/sponsors", h.apiRate.middleware(h.handleAPISponsors))
@@ -73,6 +75,8 @@ func (h *Handler) loadTemplates() {
 		"soc_lookup.html",
 		"wizard.html",
 		"timeline.html",
+		"blog.html",
+		"blog_salary_refresh.html",
 	}
 
 	for _, page := range pages {

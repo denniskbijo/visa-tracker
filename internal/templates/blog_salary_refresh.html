@@ -1,0 +1,82 @@
+{{define "content"}}
+<article class="blog-article">
+  <p class="blog-kicker"><a href="/blog">Blog</a> · {{.Post.Date}}</p>
+  <h1 class="blog-title">{{.Post.Title}}</h1>
+  <p class="blog-p">I built visa-tracker in 2026 so people like me could look up a salary and a job code and get a straight answer. The seed data I shipped with it used the April 2024 figures: Skilled Worker at £38,700, and <span class="mono">2136</span> as the software developer code.</p>
+  <p class="blog-p">Those were not the live rules.</p>
+  <p class="blog-p">The Home Office had already moved in the 22 July 2025 update. I only caught that when I sat down and checked gov.uk against what the tool was showing. If you used this site before this refresh, it could have told you that you were fine when you were not.</p>
+  <p class="blog-p">This post is the number change. Why a 2026 site launched on 2024 data is a separate story.</p>
+
+  <h2 class="blog-h">What I had to change</h2>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Route or code</th>
+        <th>What the tool had</th>
+        <th>What it uses now</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Skilled Worker general threshold</td>
+        <td class="mono">£38,700</td>
+        <td class="mono green">£41,700</td>
+      </tr>
+      <tr>
+        <td>Scale-up</td>
+        <td class="mono">£36,300</td>
+        <td class="mono green">£39,100</td>
+      </tr>
+      <tr>
+        <td>Senior or Specialist Worker (ICT)</td>
+        <td class="mono">£48,200</td>
+        <td class="mono green">£48,500</td>
+      </tr>
+      <tr>
+        <td>Immigration Salary List</td>
+        <td>80% of going rate, £30,960 floor</td>
+        <td>100% of going rate, £33,400 floor</td>
+      </tr>
+      <tr>
+        <td>Software developers</td>
+        <td class="mono">SOC 2136 · £40,000</td>
+        <td class="mono green">SOC 2134 · £54,700</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="blog-p">The Skilled Worker bump is the one most people will feel. Three thousand pounds on the general threshold is already a lot. That last row is worse.</p>
+
+  <h2 class="blog-h">The bit that actually scared me</h2>
+  <p class="blog-p">In the original seed, <span class="mono">2136</span> was "programmers and software development professionals" at £40,000. A lot of guides still say that.</p>
+  <p class="blog-p">That code does not mean that any more.</p>
+  <p class="blog-p">In the current Appendix Skilled Occupations table, <span class="mono">2136</span> is IT quality and testing professionals, going rate £41,200. Software developers are <span class="mono">2134</span>, and the going rate is £54,700 a year on a 37.5-hour week.</p>
+  <p class="blog-p">So if you typed 2136 into this site and you were a developer, the tool was about £15,000 short. Green when it should have been red.</p>
+  <p class="blog-p">The rest of the remap is the same story. Cyber security now has its own code, <span class="mono">2135</span>, at £48,500. DevOps sits under <span class="mono">2139</span> (IT professionals n.e.c.) at £52,300. Data engineers are under <span class="mono">2133</span> with architects and business analysts, at £54,900.</p>
+  <p class="blog-p">If you checked an offer here before this refresh, do it again. Use <a href="/visas/skilled-worker">Skilled Worker</a> and the code that matches the job you actually have, not the four digits you remember.</p>
+
+  <h2 class="blog-h">How the salary rule works now</h2>
+  <p class="blog-p">For a standard Skilled Worker application you have to be paid the higher of:</p>
+  <ul class="blog-list">
+    <li>the general threshold, £41,700 a year</li>
+    <li>the going rate for your SOC code</li>
+  </ul>
+  <p class="blog-p">A software developer on 2134 needs £54,700, not £41,700. A tester on 2136 needs £41,700, because the general threshold sits above that code's going rate of £41,200.</p>
+  <p class="blog-p">The Immigration Salary List used to be the "pay 80% of the going rate" loophole in a lot of people's heads. That is gone. ISL only drops the general floor to £33,400. You still need the full going rate for the job. Almost no core software roles are on the current list. Among the codes I track, biological scientists (2112) and graphic and multimedia designers (2142) are.</p>
+
+  <h2 class="blog-h">If you have an offer, do this</h2>
+  <ol class="blog-list">
+    <li>Look up the job on <a href="/soc">Job codes</a>. Search "software", "cyber", or "data". Do not trust a code you wrote down last year.</li>
+    <li>Open the route, usually <a href="/visas/skilled-worker">Skilled Worker</a>, and put in your annual salary plus that SOC code.</li>
+    <li>Green means you meet the higher of the general threshold and the going rate. Amber means you are close, or you might squeeze in via ISL if that code is actually on the list. Red means you are short.</li>
+  </ol>
+  <p class="blog-p">This is a guide, not advice. I am not a lawyer. Before you accept an offer or someone assigns a Certificate of Sponsorship, check the live tables on gov.uk.</p>
+
+  <h2 class="blog-h">Sources</h2>
+  <ul class="blog-list">
+    <li><a href="https://www.gov.uk/skilled-worker-visa/your-job" target="_blank" rel="noopener">Skilled Worker visa: your job</a></li>
+    <li><a href="https://www.gov.uk/guidance/immigration-rules/immigration-rules-appendix-skilled-worker" target="_blank" rel="noopener">Appendix Skilled Worker</a></li>
+    <li><a href="https://www.gov.uk/guidance/immigration-rules/immigration-rules-appendix-skilled-occupations" target="_blank" rel="noopener">Appendix Skilled Occupations</a> (22 July 2025 going rates)</li>
+    <li><a href="https://www.gov.uk/guidance/immigration-rules/immigration-rules-appendix-immigration-salary-list" target="_blank" rel="noopener">Appendix Immigration Salary List</a></li>
+  </ul>
+</article>
+{{end}}

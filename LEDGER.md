@@ -13,7 +13,8 @@ Source for figures: gov.uk Immigration Rules (Appendix Skilled Worker, Appendix 
 
 ## Next
 
-- [ ] Blog post on the data refresh: what changed in 2025/26, why old SOC 2136 was wrong for developers, and how to re-check an offer
+- [x] Blog: first post on the salary data refresh (`/blog/salary-thresholds-2025`)
+- [ ] Blog: second post on why the 2026 seed used 2024 numbers (draft in `internal/blog/when-the-seed-was-a-year-behind.md`)
 - [ ] Eligibility extras: new-entrant option (£33,400 + 70% going rate), STEM/non-STEM PhD discounts, £17.13 hourly floor
 - [ ] Route comparison table: pick 2–3 routes, compare sponsor, salary, duration, ILR, English, extendable
 - [ ] Expand SOC set further (more STEM Table 1 codes; optional Temporary Shortage List flag)

@@ -47,6 +47,7 @@ Go binary path: `~/.local/go/bin` (add to PATH if `go` not found).
 | `internal/handlers/` | HTTP handlers (HTML + `/api/v1/*`) |
 | `internal/wizard/` | Visa wizard recommendation logic |
 | `internal/eligibility/` | Salary vs threshold checker on visa detail pages |
+| `internal/blog/` | Blog post index and slugs |
 | `internal/templates/` | Go html/template pages and HTMX partials |
 | `internal/store/` | SQLite persistence |
 | `internal/ingest/` | YAML seed + gov.uk CSV ingest |
