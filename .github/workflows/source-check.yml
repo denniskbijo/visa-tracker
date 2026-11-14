@@ -1,0 +1,21 @@
+name: Monthly gov.uk source check
+
+on:
+  schedule:
+    - cron: "0 8 1 * *"
+  workflow_dispatch:
+
+jobs:
+  check-sources:
+    name: Verify seed markers still appear on gov.uk
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Check official appendices
+        run: go run ./cmd/server -check-sources

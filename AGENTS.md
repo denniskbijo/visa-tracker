@@ -87,6 +87,6 @@ gosec ./...
 
 Keep `govulncheck` clean; bump Go/stdlib deps when security CI flags issues.
 
-Salary thresholds and SOC codes are a dated YAML snapshot. Once a month run `make check-sources`, re-read the gov.uk appendices, update `data/*.yaml` if the rules moved, and bump `last_checked` in `data/source_check.yaml`.
+Salary thresholds and SOC codes are a dated YAML snapshot. Once a month run `make check-sources`, re-read the gov.uk appendices, update `data/*.yaml` if the rules moved, and bump `last_checked` in `data/source_check.yaml`. GitHub Actions runs the same check on the 1st of each month.
 
 See [LEDGER.md](LEDGER.md) for remaining work. See [README.md](README.md#roadmap) for the public feature list.
