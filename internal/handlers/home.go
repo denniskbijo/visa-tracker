@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/denniskbijo/visa-tracker/internal/ingest"
 	"github.com/denniskbijo/visa-tracker/internal/models"
 )
 
@@ -33,6 +34,11 @@ func (h *Handler) handleHome(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	var sourceChecked string
+	if sc, err := ingest.LoadSourceCheck(h.cfg.DataDir); err == nil && sc != nil {
+		sourceChecked = sc.LastCheckedDisplay()
+	}
+
 	data := struct {
 		Title             string
 		ActiveNav         string
@@ -42,6 +48,7 @@ func (h *Handler) handleHome(w http.ResponseWriter, r *http.Request) {
 		SOCCount          int
 		SkilledWorker     *models.VisaRoute
 		SkilledWorkerNote string
+		SourceChecked     string
 	}{
 		ActiveNav:         "home",
 		Routes:            routes,
@@ -50,6 +57,7 @@ func (h *Handler) handleHome(w http.ResponseWriter, r *http.Request) {
 		SOCCount:          len(socCodes),
 		SkilledWorker:     skilledWorker,
 		SkilledWorkerNote: skilledWorkerNote,
+		SourceChecked:     sourceChecked,
 	}
 
 	h.render(w, "home.html", data)

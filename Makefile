@@ -1,4 +1,4 @@
-.PHONY: build run dev test clean ingest migrate
+.PHONY: build run dev test clean ingest migrate check-sources
 
 BINARY := visa-tracker
 DB     := visa-tracker.db
@@ -23,3 +23,6 @@ ingest: build
 
 migrate: build
 	./$(BINARY) -migrate
+
+check-sources: build
+	./$(BINARY) -check-sources

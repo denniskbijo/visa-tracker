@@ -19,7 +19,17 @@ import (
 func main() {
 	migrateOnly := flag.Bool("migrate", false, "run migrations and exit")
 	ingestOnly := flag.Bool("ingest", false, "run data ingestion and exit")
+	checkSources := flag.Bool("check-sources", false, "fetch gov.uk appendices and verify seed markers")
 	flag.Parse()
+
+	if *checkSources {
+		cfg := config.Load()
+		if err := ingest.CheckGovSources(cfg.DataDir); err != nil {
+			log.Fatalf("source check failed: %v", err)
+		}
+		log.Println("gov.uk source check passed")
+		return
+	}
 
 	cfg := config.Load()
 

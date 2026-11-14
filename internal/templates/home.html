@@ -37,6 +37,7 @@
       <div class="th-label">Skilled Worker threshold</div>
       <div class="th-value">{{.SkilledWorker.ThresholdPounds}} / yr</div>
       {{if .SkilledWorkerNote}}<div class="th-sub">{{.SkilledWorkerNote}}</div>{{end}}
+      {{if .SourceChecked}}<div class="th-sub">Checked against gov.uk monthly · last check {{.SourceChecked}}</div>{{end}}
     </div>
     {{end}}
   </div>

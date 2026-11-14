@@ -53,6 +53,8 @@ All settings via environment variables:
 | `SPONSOR_CSV_URL` | *(gov.uk latest)* | Licensed sponsors CSV; host must be `assets.publishing.service.gov.uk` |
 | `REFRESH_INTERVAL_HOURS` | `24` | Hours between sponsor refreshes |
 
+Salary and SOC figures are a dated snapshot in `data/`. Once a month run `make check-sources` against the live gov.uk appendices, update the YAML if the rules moved, and bump `last_checked` in `data/source_check.yaml`.
+
 ## Project Layout
 
 ```

@@ -51,7 +51,7 @@ Go binary path: `~/.local/go/bin` (add to PATH if `go` not found).
 | `internal/templates/` | Go html/template pages and HTMX partials |
 | `internal/store/` | SQLite persistence |
 | `internal/ingest/` | YAML seed + gov.uk CSV ingest |
-| `data/` | YAML seed data and SQL migrations |
+| `data/` | YAML seed data, SQL migrations, and `source_check.yaml` (monthly gov.uk markers) |
 | `LEDGER.md` | Remaining work; pick one item, ship it, mark it done |
 | `static/` | CSS, HTMX, `app.js` |
 
@@ -86,5 +86,7 @@ gosec ./...
 ```
 
 Keep `govulncheck` clean; bump Go/stdlib deps when security CI flags issues.
+
+Salary thresholds and SOC codes are a dated YAML snapshot. Once a month run `make check-sources`, re-read the gov.uk appendices, update `data/*.yaml` if the rules moved, and bump `last_checked` in `data/source_check.yaml`.
 
 See [LEDGER.md](LEDGER.md) for remaining work. See [README.md](README.md#roadmap) for the public feature list.

@@ -1,0 +1,24 @@
+# Snapshot of figures we expect to still appear on the official gov.uk pages.
+# Every month: run `make check-sources`, re-read the appendices, update seed YAML
+# if the rules moved, then bump last_checked.
+last_checked: "2026-09-12"
+max_age_days: 45
+
+sources:
+  - id: appendix-skilled-worker
+    url: https://www.gov.uk/guidance/immigration-rules/immigration-rules-appendix-skilled-worker
+    must_contain:
+      - "41,700"
+
+  - id: appendix-skilled-occupations
+    url: https://www.gov.uk/guidance/immigration-rules/immigration-rules-appendix-skilled-occupations
+    must_contain:
+      - "Programmers and software development professionals"
+      - "54,700"
+      - "Cyber security professionals"
+
+  - id: appendix-immigration-salary-list
+    url: https://www.gov.uk/guidance/immigration-rules/immigration-rules-appendix-immigration-salary-list
+    must_contain:
+      - "Biological scientists"
+      - "Graphic and multimedia designers"

@@ -55,6 +55,8 @@ The Immigration Salary List used to be the "pay 80% of the going rate" loophole 
 
 This is a guide, not advice. I am not a lawyer. Before you accept an offer or someone assigns a Certificate of Sponsorship, check the live tables on gov.uk.
 
+From here on I am going to re-read those gov.uk pages every month and update this tool when they move.
+
 ## Sources
 
 - [Skilled Worker visa: your job](https://www.gov.uk/skilled-worker-visa/your-job)

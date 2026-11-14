@@ -34,7 +34,7 @@ That is what changed for me. The first pass used memory. This pass used the sour
 
 If the official page exists, open it. A model, a blog, even your own memory can sound sure about a number that decides whether someone is eligible.
 
-In this codebase I want a simple habit. The sponsor list already comes from the live CSV, so leave that alone. Thresholds and SOC codes can stay in YAML, as long as the file says when it was taken and which appendix it came from. If that date is old, treat the file as a snapshot until someone re-reads gov.uk. And anything an assistant writes into `data/` gets checked against the live page before it ships.
+In this codebase I want a simple habit. The sponsor list already comes from the live CSV, so leave that alone. Thresholds and SOC codes can stay in YAML, as long as the file says when it was taken and which appendix it came from. Every month I will open those gov.uk pages again, run the source check in this repo, and update the seed if anything moved. And anything an assistant writes into `data/` gets checked against the live page before it ships.
 
 I am not naming tools here. I care about the difference between "this sounds right" and "this is on the page today."
 
