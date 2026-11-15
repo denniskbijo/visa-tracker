@@ -9,6 +9,13 @@ type Post struct {
 
 var posts = []Post{
 	{
+		Slug:    "ict-threshold-52500",
+		Title:   "The ICT floor is £52,500. This site still said £48,500.",
+		Date:    "2026-11-15",
+		Summary: "The ICT floor has been £52,500 since 22 July 2025. This site was still showing £48,500.",
+		// Source: internal/blog/ict-threshold-52500.md
+	},
+	{
 		Slug:    "salary-thresholds-2025",
 		Title:   "The numbers on this site were wrong. Here is the refresh.",
 		Date:    "2026-09-04",

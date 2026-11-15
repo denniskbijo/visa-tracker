@@ -77,6 +77,7 @@ func (h *Handler) loadTemplates() {
 		"timeline.html",
 		"blog.html",
 		"blog_salary_refresh.html",
+		"blog_ict_threshold_52500.html",
 	}
 
 	for _, page := range pages {

@@ -91,7 +91,7 @@ func (db *DB) LatestGeneralThreshold(visaRouteID int64) (*models.SalaryThreshold
 		SELECT id, visa_route_id, soc_code, amount_pence, effective_date, notes, created_at
 		FROM salary_thresholds
 		WHERE visa_route_id = ? AND (soc_code = '' OR soc_code IS NULL)
-		ORDER BY effective_date DESC
+		ORDER BY effective_date DESC, id DESC
 		LIMIT 1`, visaRouteID).
 		Scan(&t.ID, &t.VisaRouteID, &t.SOCCode, &t.AmountPence, &t.EffectiveDate, &t.Notes, &t.CreatedAt)
 	if err == sql.ErrNoRows {
@@ -109,7 +109,7 @@ func (db *DB) LatestThresholdForSOC(visaRouteID int64, socCode string) (*models.
 		SELECT id, visa_route_id, soc_code, amount_pence, effective_date, notes, created_at
 		FROM salary_thresholds
 		WHERE visa_route_id = ? AND soc_code = ?
-		ORDER BY effective_date DESC
+		ORDER BY effective_date DESC, id DESC
 		LIMIT 1`, visaRouteID, socCode).
 		Scan(&t.ID, &t.VisaRouteID, &t.SOCCode, &t.AmountPence, &t.EffectiveDate, &t.Notes, &t.CreatedAt)
 	if err == sql.ErrNoRows {
@@ -126,7 +126,7 @@ func (db *DB) LatestThresholds(visaRouteID int64) ([]models.SalaryThreshold, err
 		SELECT id, visa_route_id, soc_code, amount_pence, effective_date, notes, created_at
 		FROM salary_thresholds
 		WHERE visa_route_id = ?
-		ORDER BY effective_date DESC
+		ORDER BY effective_date DESC, id DESC
 		LIMIT 10`, visaRouteID)
 	if err != nil {
 		return nil, err

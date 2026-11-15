@@ -53,7 +53,7 @@ All settings via environment variables:
 | `SPONSOR_CSV_URL` | *(gov.uk latest)* | Licensed sponsors CSV; host must be `assets.publishing.service.gov.uk` |
 | `REFRESH_INTERVAL_HOURS` | `24` | Hours between sponsor refreshes |
 
-Salary and SOC figures are a dated snapshot in `data/`. Once a month run `make check-sources` against the live gov.uk appendices, update the YAML if the rules moved, and bump `last_checked` in `data/source_check.yaml`. GitHub Actions runs the same check on the 1st of each month.
+Salary and SOC figures are a dated snapshot in `data/`. Once a month run `make check-sources` against the live gov.uk appendices, update the YAML if the rules moved, and bump `last_checked` in `data/source_check.yaml`. GitHub Actions runs the same check on the 1st of each month. When the markers still match, it opens a pull request that bumps `last_checked`. When they do not, it opens an issue and leaves the date alone.
 
 ## Project Layout
 

@@ -1,7 +1,10 @@
 # Snapshot of figures we expect to still appear on the official gov.uk pages.
-# Every month: run `make check-sources`, re-read the appendices, update seed YAML
-# if the rules moved, then bump last_checked.
-last_checked: "2026-09-12"
+# On the 1st of each month the source-check workflow fetches these pages.
+# If every marker is still present it opens a pull request that bumps
+# last_checked. If any marker is missing it opens an issue and leaves
+# last_checked alone. `make check-sources` still fails when last_checked
+# is older than max_age_days.
+last_checked: "2026-11-15"
 max_age_days: 45
 
 sources:
@@ -22,3 +25,9 @@ sources:
     must_contain:
       - "Biological scientists"
       - "Graphic and multimedia designers"
+
+  # Senior or Specialist Worker general threshold (SNR 8.1).
+  - id: appendix-global-business-mobility
+    url: https://www.gov.uk/guidance/immigration-rules/immigration-rules-appendix-global-business-mobility-routes
+    must_contain:
+      - "52,500"
