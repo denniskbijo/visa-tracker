@@ -1,59 +1,89 @@
 {{define "content"}}
-<p class="page-intro">Answer a few questions about your situation and we'll suggest UK visa routes that may fit, with plain-English reasons why.</p>
+<p class="page-intro">Four questions for UK tech and STEM work visas. If you are already a Skilled Worker, the quiz looks at settlement timing, your salary, and switches. If not, it looks at sponsored jobs and routes that do not need a sponsor.</p>
 
 <div class="card">
   <div class="card-header">
-    <div class="card-title">Visa wizard</div>
+    <div class="card-title">Take the UK visa quiz</div>
     <div class="card-badge wizard-step-label">Step <span id="wizard-step-num">1</span> of 4</div>
   </div>
 
   <div class="wizard-progress"><div class="wizard-progress-fill" id="wizard-progress"></div></div>
 
-  <form id="wizard-form" hx-post="/wizard/results" hx-target="#wizard-results" hx-swap="innerHTML" hx-indicator="#wizard-loading">
+  <form id="wizard-form" hx-post="/quiz/results" hx-target="#wizard-results" hx-swap="innerHTML" hx-indicator="#wizard-loading" autocomplete="off">
     <fieldset class="wizard-step" data-step="1">
-      <legend class="wizard-question">Do you have a UK job offer?</legend>
+      <legend class="wizard-question">Are you currently working in the UK as a Skilled Worker?</legend>
+      <p class="wizard-hint">Yes means you already hold a Skilled Worker visa for a sponsored UK job.</p>
       <div class="wizard-options">
-        <label class="wizard-option"><input type="radio" name="job_offer" value="yes" required /> Yes, I have a signed or verbal offer</label>
-        <label class="wizard-option"><input type="radio" name="job_offer" value="no" /> No, not yet</label>
+        <label class="wizard-option"><input type="radio" name="on_skilled_worker" value="yes" /> Yes</label>
+        <label class="wizard-option"><input type="radio" name="on_skilled_worker" value="not_yet" /> Not yet</label>
       </div>
     </fieldset>
 
-    <fieldset class="wizard-step hidden" data-step="2">
-      <legend class="wizard-question">Does your employer have a sponsor licence?</legend>
-      <p class="wizard-hint">Employers must be on the gov.uk Register of Licensed Sponsors to hire on most work visas.</p>
+    <fieldset class="wizard-step hidden" data-step="2" data-track="yes">
+      <legend class="wizard-question">How long have you been on Skilled Worker?</legend>
+      <p class="wizard-hint">This site's timeline counts {{.ILRYears}} years on Skilled Worker toward <span class="glossary" tabindex="0">ILR<span class="glossary-tip">Indefinite leave to remain: settlement, so you can live in the UK without a visa.</span></span>. Confirm the rules on gov.uk before you apply.</p>
       <div class="wizard-options">
-        <label class="wizard-option"><input type="radio" name="sponsor" value="yes" /> Yes, they're a licensed sponsor</label>
-        <label class="wizard-option"><input type="radio" name="sponsor" value="unsure" /> Not sure, I need to check</label>
-        <label class="wizard-option"><input type="radio" name="sponsor" value="no" /> No / no employer yet</label>
+        <label class="wizard-option"><input type="radio" name="years_on_route" value="under_3" /> Under 3 years</label>
+        <label class="wizard-option"><input type="radio" name="years_on_route" value="3_to_5" /> 3 years or more, but under {{.ILRYears}}</label>
+        <label class="wizard-option"><input type="radio" name="years_on_route" value="5_plus" /> {{.ILRYears}} years or more</label>
+      </div>
+    </fieldset>
+
+    <fieldset class="wizard-step hidden" data-step="2" data-track="not_yet">
+      <legend class="wizard-question">Do you have a UK job offer in tech or STEM?</legend>
+      <p class="wizard-hint">Skilled Worker and Scale-up need a licensed sponsor. Global Talent, Graduate, and <span class="glossary" tabindex="0">HPI<span class="glossary-tip">High Potential Individual: a visa for recent graduates of universities on the Home Office list. No job offer or sponsor needed.</span></span> do not.</p>
+      <div class="wizard-options">
+        <label class="wizard-option"><input type="radio" name="offer_sponsor" value="sponsor_yes" /> Yes, and the employer is a licensed sponsor</label>
+        <label class="wizard-option"><input type="radio" name="offer_sponsor" value="sponsor_unsure" /> Yes, but I'm not sure they can sponsor</label>
+        <label class="wizard-option"><input type="radio" name="offer_sponsor" value="sponsor_no" /> Yes, but they can't or won't sponsor</label>
+        <label class="wizard-option"><input type="radio" name="offer_sponsor" value="no_offer" /> No offer yet</label>
       </div>
     </fieldset>
 
     <fieldset class="wizard-step hidden" data-step="3">
-      <legend class="wizard-question">What's your expected annual salary?</legend>
-      <p class="wizard-hint">In pounds per year, before tax. Leave blank if you don't know yet.</p>
+      <legend class="wizard-question">
+        <span data-salary-copy="yes" class="hidden">What's your current annual salary?</span>
+        <span data-salary-copy="not_yet">What's your expected annual salary?</span>
+      </legend>
+      <p class="wizard-hint">
+        <span data-salary-copy="yes" class="hidden">Before tax, in pounds per year. We'll compare it with the Skilled Worker threshold stored on this site. The <span class="glossary" tabindex="0">going rate<span class="glossary-tip">The minimum salary for your job code. It can be higher than the general threshold.</span></span> for your job code can be higher.</span>
+        <span data-salary-copy="not_yet">Before tax, in pounds per year. Leave blank if you don't know yet. We'll compare it with the Skilled Worker and Scale-up thresholds stored on this site.</span>
+      </p>
       <div class="wizard-salary">
         <span class="wizard-currency">£</span>
-        <input type="number" name="salary" class="search-input" placeholder="e.g. 45000" min="0" step="1000" />
+        <input type="number" name="salary" class="search-input" placeholder="e.g. 45000" min="0" step="1000" inputmode="numeric" />
       </div>
     </fieldset>
 
-    <fieldset class="wizard-step hidden" data-step="4">
-      <legend class="wizard-question">What's your education background?</legend>
+    <fieldset class="wizard-step hidden" data-step="4" data-track="yes">
+      <legend class="wizard-question">What do you want to do next?</legend>
+      <p class="wizard-hint">Stay on your current visa, or look at a switch that fits a tech or STEM career.</p>
       <div class="wizard-options">
-        <label class="wizard-option"><input type="radio" name="background" value="none" required /> Other / not listed</label>
+        <label class="wizard-option"><input type="radio" name="next_step" value="stay" /> Stay on Skilled Worker and keep going toward ILR</label>
+        <label class="wizard-option"><input type="radio" name="next_step" value="global_talent" /> Look at switching to Global Talent</label>
+        <label class="wizard-option"><input type="radio" name="next_step" value="scale_up" /> Look at Scale-up, if my employer qualifies</label>
+      </div>
+    </fieldset>
+
+    <fieldset class="wizard-step hidden" data-step="4" data-track="not_yet">
+      <legend class="wizard-question">Which of these fits you?</legend>
+      <p class="wizard-hint">Pick the closest match. These are the unsponsored and study routes we track for tech and STEM.</p>
+      <div class="wizard-options">
         <label class="wizard-option"><input type="radio" name="background" value="uk_graduate" /> Recent graduate of a UK university</label>
-        <label class="wizard-option"><input type="radio" name="background" value="top_university" /> Graduate of a top global university (HPI eligible)</label>
+        <label class="wizard-option"><input type="radio" name="background" value="top_university" /> Graduate of a top global university on the HPI list</label>
+        <label class="wizard-option"><input type="radio" name="background" value="tech_talent" /> Strong tech or STEM record (I could seek endorsement)</label>
+        <label class="wizard-option"><input type="radio" name="background" value="none" /> None of these</label>
       </div>
     </fieldset>
 
     <div class="wizard-nav">
       <button type="button" class="btn-outline hidden" id="wizard-prev">Back</button>
       <button type="button" class="btn-primary" id="wizard-next">Next</button>
-      <button type="submit" class="btn-primary hidden" id="wizard-submit">See recommendations</button>
+      <button type="submit" class="btn-primary hidden" id="wizard-submit">See my results</button>
     </div>
   </form>
 
-  <div id="wizard-loading" class="htmx-indicator">Analysing your answers...</div>
+  <div id="wizard-loading" class="htmx-indicator">Checking your answers...</div>
 </div>
 
 <div id="wizard-results"></div>

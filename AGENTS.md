@@ -10,13 +10,13 @@ Guidance for AI agents working on **visa-tracker**.
 
 ## Project summary
 
-Open-source UK work visa tracker for tech/STEM professionals. Compare visa routes, search licensed sponsors, look up SOC codes, run a visa wizard, and track a personal timeline. Data from gov.uk; deployed on Oracle Cloud Free Tier with Caddy + GitHub Actions.
+Open-source UK work visa tracker for tech/STEM professionals. Compare visa routes, search licensed sponsors, look up SOC codes, take the UK visa quiz, and track a personal timeline. Data from gov.uk; deployed on Oracle Cloud Free Tier with Caddy + GitHub Actions.
 
 ## Stack
 
 - **Go 1.26.3+** (pure Go, no CGO)
 - **SQLite** via `modernc.org/sqlite`
-- **HTML templates + HTMX** for UI (minimal JS in `static/app.js` only where needed: wizard steps, timeline localStorage)
+- **HTML templates + HTMX** for UI (minimal JS in `static/app.js` only where needed: quiz steps, timeline localStorage)
 - Single binary: `cmd/server`
 
 ## Local development
@@ -45,7 +45,7 @@ Go binary path: `~/.local/go/bin` (add to PATH if `go` not found).
 |------|---------|
 | `cmd/server/` | Entry point |
 | `internal/handlers/` | HTTP handlers (HTML + `/api/v1/*`) |
-| `internal/wizard/` | Visa wizard recommendation logic |
+| `internal/wizard/` | UK visa quiz recommendation logic |
 | `internal/eligibility/` | Salary vs threshold checker on visa detail pages |
 | `internal/blog/` | Blog post index and slugs |
 | `internal/templates/` | Go html/template pages and HTMX partials |
@@ -75,7 +75,7 @@ Go binary path: `~/.local/go/bin` (add to PATH if `go` not found).
 - Live search (HTMX debounced) on sponsor/SOC pages.
 - Helpful empty states with example chips.
 - Skilled Worker threshold from DB, not hardcoded in templates.
-- Visa wizard at `/wizard`; personal timeline at `/timeline`; eligibility checker on `/visas/{slug}`.
+- UK visa quiz at `/quiz` (`/wizard` redirects); personal timeline at `/timeline`; eligibility checker on `/visas/{slug}`.
 
 ## Tests
 

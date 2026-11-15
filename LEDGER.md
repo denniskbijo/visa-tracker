@@ -7,7 +7,7 @@ Source for figures: gov.uk Immigration Rules (Appendix Skilled Worker, Appendix 
 ## Done
 
 - [x] Eligibility checker on `/visas/{slug}` (green / amber / red vs threshold)
-- [x] Visa wizard (`/wizard`)
+- [x] UK visa quiz (`/quiz`; `/wizard` redirects)
 - [x] Personal timeline (`/timeline`), including JSON embed fix
 - [x] Data refresh (Sep 2026): SW £41,700, Scale-up £39,100, ICT £48,500; SOC remap (2134 programmers at £54,700); ISL is 100% going rate + £33,400 floor
 
@@ -31,7 +31,7 @@ Source for figures: gov.uk Immigration Rules (Appendix Skilled Worker, Appendix 
 ## Product copy and routes
 
 - [ ] Wizard: English B2 for first-time Skilled Worker, Scale-up, HPI
-- [ ] HPI: university list size, annual cap, PhD = 3 years (description updated; wizard/timeline still treat all HPI as 2 years)
+- [ ] HPI: university list size, annual cap, PhD = 3 years (description updated and the quiz quotes it; timeline still treats every HPI grant as 2 years)
 - [ ] Graduate: 18-month grant from 1 Jan 2027 for most non-PhD applicants
 - [ ] Innovator Founder route (tech founders)
 - [ ] Global Talent: Talent vs Promise ILR (3 vs 5 years) in timeline

@@ -8,7 +8,7 @@ Built with Go, SQLite (pure Go), and HTMX. No JavaScript frameworks. No CGO. Sin
 
 - **Visa Route Dashboard**: compare 6 UK work visa routes side-by-side (Skilled Worker, Global Talent, HPI, Scale-up, ICT, Graduate) with salary thresholds, processing times, and eligibility at a glance
 - **Eligibility Checker**: on each visa detail page, enter salary and SOC code to see green/amber/red vs the route threshold (`/visas/{slug}`)
-- **Visa Wizard**: answer a few questions and get ranked route suggestions with plain-English reasons (`/wizard`)
+- **UK visa quiz**: four questions for tech and STEM. Skilled Worker settlement and salary, or a route if you are not sponsored yet (`/quiz`; `/wizard` redirects)
 - **Personal Timeline**: track visa expiry and ILR countdown in your browser, no account needed (`/timeline`)
 - **Sponsor Search**: full-text search across 140k+ employers from the [gov.uk Register of Licensed Sponsors](https://www.gov.uk/government/publications/register-of-licensed-sponsors-workers), filterable by city and route
 - **SOC Code Lookup**: find your Standard Occupational Classification code, its going-rate salary, and whether it's on the Immigration Salary List
@@ -67,7 +67,7 @@ internal/
   store/                SQLite persistence layer (pure Go via modernc.org/sqlite)
   ingest/               YAML seed loader, gov.uk CSV downloader, refresh scheduler
   handlers/             HTTP handlers for HTML pages and /api/v1/ JSON endpoints
-  wizard/               Visa wizard recommendation logic
+  wizard/               UK visa quiz recommendation logic
   eligibility/          Salary vs threshold checker (green/amber/red)
   templates/            Go html/template files with HTMX partials
     partials/           HTMX partial templates for live search results
@@ -114,7 +114,7 @@ curl "http://localhost:8080/api/v1/soc?q=security"
 | Feature | Description |
 |---|---|
 | Eligibility checker | Enter salary + SOC on a visa page; green/amber/red vs threshold, with ISL hints |
-| Visa wizard | Ranked route suggestions from a short questionnaire (`/wizard`) |
+| UK visa quiz | Four questions, with a Skilled Worker branch and a not-yet branch (`/quiz`) |
 | Personal timeline | Visa expiry and ILR countdown in localStorage (`/timeline`) |
 
 ### Next up (high value)

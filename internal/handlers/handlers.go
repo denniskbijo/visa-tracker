@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"time"
 
@@ -21,9 +22,33 @@ type Handler struct {
 }
 
 var funcMap = template.FuncMap{
-	"upper":         strings.ToUpper,
-	"threshold_bar": thresholdBar,
-	"route_color":   routeColor,
+	"upper":           strings.ToUpper,
+	"threshold_bar":   thresholdBar,
+	"route_color":     routeColor,
+	"metaDescription": pageMetaDescription,
+}
+
+// pageMetaDescription reads an optional MetaDescription field. Pages that do
+// not set one render no description tag.
+func pageMetaDescription(data any) string {
+	if data == nil {
+		return ""
+	}
+	v := reflect.ValueOf(data)
+	for v.Kind() == reflect.Pointer || v.Kind() == reflect.Interface {
+		if v.IsNil() {
+			return ""
+		}
+		v = v.Elem()
+	}
+	if v.Kind() != reflect.Struct {
+		return ""
+	}
+	f := v.FieldByName("MetaDescription")
+	if !f.IsValid() || f.Kind() != reflect.String {
+		return ""
+	}
+	return f.String()
 }
 
 func New(db *store.DB, cfg *config.Config) *Handler {
@@ -51,7 +76,9 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("/sponsors/results", h.handleSponsorResults)
 	mux.HandleFunc("/soc", h.handleSOC)
 	mux.HandleFunc("/soc/results", h.handleSOCResults)
-	mux.HandleFunc("/wizard", h.handleWizard)
+	mux.HandleFunc("/quiz", h.handleWizard)
+	mux.HandleFunc("/quiz/results", h.handleWizardResults)
+	mux.HandleFunc("/wizard", h.redirectQuiz)
 	mux.HandleFunc("/wizard/results", h.handleWizardResults)
 	mux.HandleFunc("/timeline", h.handleTimeline)
 	mux.HandleFunc("/blog", h.handleBlog)
@@ -148,12 +175,12 @@ func thresholdBar(thresholdPence int64) int {
 
 func routeColor(slug string) string {
 	colors := map[string]string{
-		"skilled-worker":           "#1D9E75",
-		"global-talent":            "#378ADD",
+		"skilled-worker":            "#1D9E75",
+		"global-talent":             "#378ADD",
 		"high-potential-individual": "#EF9F27",
-		"scale-up":                 "#5DCAA5",
-		"intra-company-transfer":   "#D4537E",
-		"graduate":                 "#85B7EB",
+		"scale-up":                  "#5DCAA5",
+		"intra-company-transfer":    "#D4537E",
+		"graduate":                  "#85B7EB",
 	}
 	if c, ok := colors[slug]; ok {
 		return c
