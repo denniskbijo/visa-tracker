@@ -2,15 +2,23 @@ package wizard
 
 import (
 	"sort"
+	"strconv"
+	"strings"
 
 	"github.com/denniskbijo/visa-tracker/internal/models"
 )
 
+// SkilledWorkerILRYears is the settlement count the timeline already uses for
+// Skilled Worker. The quiz points at that timeline. It does not add a new rule.
+const SkilledWorkerILRYears = 5
+
 type Input struct {
-	JobOffer   string // yes, no
-	Sponsor    string // yes, no, unsure
-	Salary     int64  // annual pounds, 0 = not provided
-	Background string // none, uk_graduate, top_university
+	OnSkilledWorker string // yes, not_yet
+	YearsOnRoute    string // under_3, 3_to_5, 5_plus
+	NextStep        string // stay, global_talent, scale_up
+	OfferSponsor    string // sponsor_yes, sponsor_unsure, sponsor_no, no_offer
+	Salary          int64  // annual pounds, 0 = not provided
+	Background      string // uk_graduate, top_university, tech_talent, none
 }
 
 type MatchLevel string
@@ -32,113 +40,224 @@ func Recommend(input Input, routes []models.VisaRoute) []Recommendation {
 	for _, r := range routes {
 		bySlug[r.Slug] = r
 	}
-
-	var recs []Recommendation
-
-	add := func(slug string, match MatchLevel, reasons ...string) {
-		r, ok := bySlug[slug]
-		if !ok {
-			return
-		}
-		recs = append(recs, Recommendation{
-			Route:   r,
-			Match:   match,
-			Reasons: reasons,
-		})
+	b := &builder{bySlug: bySlug}
+	if input.OnSkilledWorker == "yes" {
+		b.currentSkilledWorker(input)
+	} else {
+		b.notYet(input)
 	}
-
-	hasOffer := input.JobOffer == "yes"
-	hasSponsor := input.Sponsor == "yes"
-	salary := input.Salary
-	meetsSW := meetsRouteThreshold(bySlug["skilled-worker"], salary)
-	meetsScaleUp := meetsRouteThreshold(bySlug["scale-up"], salary)
-	meetsICT := salary > 0 && meetsRouteThreshold(bySlug["intra-company-transfer"], salary)
-
-	switch {
-	case !hasOffer && input.Background == "uk_graduate":
-		add("graduate", MatchHigh,
-			"You have a UK degree and no job offer yet. The Graduate route lets you work without a sponsor for 2 years.",
-			"Often used as a bridge to Skilled Worker once you find a role.")
-		add("skilled-worker", MatchLow,
-			"You'll need a job offer and sponsor to switch before your Graduate visa expires.")
-
-	case !hasOffer && input.Background == "top_university":
-		add("high-potential-individual", MatchHigh,
-			"Graduates of eligible top global universities can work in the UK for 2 years (3 years with a PhD) without a job offer or sponsor.",
-			"Plan to switch to Skilled Worker or Global Talent before it expires. HPI cannot be extended.")
-		add("global-talent", MatchMedium,
-			"If you have exceptional talent in tech or STEM, endorsement may be possible without a job offer.")
-
-	case !hasOffer:
-		add("high-potential-individual", MatchMedium,
-			"If you graduated from a Home Office listed top global university, you may qualify without a job offer.")
-		add("global-talent", MatchMedium,
-			"Leaders and emerging talent in tech can apply with endorsement. No job offer required.")
-		add("graduate", MatchLow,
-			"Only if you recently completed a degree at a UK university.")
-
-	case hasOffer && hasSponsor:
-		if salary == 0 || meetsSW {
-			add("skilled-worker", MatchHigh,
-				"You have a job offer and licensed sponsor. This is the main work visa route.",
-				thresholdReason(bySlug["skilled-worker"], salary))
-		} else {
-			add("skilled-worker", MatchLow,
-				"You have a sponsor, but your salary may be below the "+bySlug["skilled-worker"].ThresholdPounds()+" general threshold.",
-				"Check the going rate for your SOC code. Some roles have different minimums.")
-		}
-		if salary == 0 || meetsScaleUp {
-			add("scale-up", MatchMedium,
-				"Qualifying high-growth companies can sponsor on a slightly lower threshold ("+bySlug["scale-up"].ThresholdPounds()+").",
-				"Sponsor required for the first 6 months, then you can change employers freely.")
-		}
-		if meetsICT {
-			add("intra-company-transfer", MatchMedium,
-				"Suitable if your employer is transferring you from an overseas branch.",
-				"Higher salary threshold ("+bySlug["intra-company-transfer"].ThresholdPounds()+"), typically for senior or specialist roles.")
-		}
-
-	case hasOffer && input.Sponsor == "unsure":
-		add("skilled-worker", MatchMedium,
-			"You have a job offer. Confirm your employer is on the Register of Licensed Sponsors.",
-			"Use our sponsor search to check before applying.")
-		if salary == 0 || meetsScaleUp {
-			add("scale-up", MatchLow,
-				"Worth exploring if your employer is a qualifying scale-up company.")
-		}
-
-	case hasOffer && !hasSponsor:
-		add("global-talent", MatchHigh,
-			"No sponsor needed. Requires endorsement from a designated body (e.g. for tech talent).",
-			"Ideal if your employer won't sponsor but you have a strong track record.")
-		add("skilled-worker", MatchLow,
-			"You'll need to find a licensed sponsor willing to employ you on this route.")
-	}
-
-	// Deduplicate by slug, keeping highest match.
-	recs = dedupeBest(recs)
+	recs := dedupeBest(b.recs)
 	sortRecs(recs)
 	return recs
 }
 
-func meetsRouteThreshold(r models.VisaRoute, salary int64) bool {
-	if salary == 0 {
-		return true
+type builder struct {
+	bySlug map[string]models.VisaRoute
+	recs   []Recommendation
+}
+
+func (b *builder) add(slug string, match MatchLevel, situational ...string) {
+	r, ok := b.bySlug[slug]
+	if !ok {
+		return
 	}
+	reasons := make([]string, 0, len(situational)+1)
+	for _, s := range situational {
+		if s != "" {
+			reasons = append(reasons, s)
+		}
+	}
+	if desc := cleanDesc(r.Description); desc != "" {
+		reasons = append(reasons, desc)
+	}
+	b.recs = append(b.recs, Recommendation{
+		Route:   r,
+		Match:   match,
+		Reasons: reasons,
+	})
+}
+
+func (b *builder) currentSkilledWorker(input Input) {
+	sw := b.bySlug["skilled-worker"]
+	b.add("skilled-worker", MatchHigh,
+		ilrReadiness(input.YearsOnRoute),
+		salaryCompare(sw, input.Salary),
+		"You already have a sponsored UK job on this route. The Skilled Worker page checks your salary against the general threshold and your job code.",
+	)
+
+	switch input.NextStep {
+	case "global_talent":
+		gt := b.bySlug["global-talent"]
+		b.add("global-talent", MatchMedium,
+			"A switch to look at if you have a strong tech or STEM record. No sponsor is required.",
+			salaryCompare(gt, input.Salary),
+		)
+	case "scale_up":
+		su := b.bySlug["scale-up"]
+		b.add("scale-up", salaryMatch(MatchMedium, su, input.Salary),
+			"A switch only if your employer is a qualifying high-growth sponsor.",
+			salaryCompare(su, input.Salary),
+		)
+	}
+}
+
+func (b *builder) notYet(input Input) {
+	switch input.OfferSponsor {
+	case "sponsor_yes":
+		b.offerWithSponsor(input)
+	case "sponsor_unsure":
+		b.offerUnsure(input)
+	case "sponsor_no":
+		b.offerWithoutSponsor(input)
+	default:
+		b.noOffer(input)
+	}
+}
+
+func (b *builder) offerWithSponsor(input Input) {
+	sw := b.bySlug["skilled-worker"]
+	b.add("skilled-worker", salaryMatch(MatchHigh, sw, input.Salary),
+		"You have a UK tech or STEM offer from a licensed sponsor. Skilled Worker is the usual sponsored route.",
+		salaryCompare(sw, input.Salary),
+	)
+
+	su := b.bySlug["scale-up"]
+	b.add("scale-up", salaryMatch(MatchMedium, su, input.Salary),
+		"Also possible if the employer is a qualifying high-growth sponsor.",
+		salaryCompare(su, input.Salary),
+	)
+
+	// ICT is a transfer route, not a settlement route. Show it only when the
+	// stated salary meets the stored threshold, and say it does not lead to ILR.
+	ict := b.bySlug["intra-company-transfer"]
+	if input.Salary > 0 && meetsRouteThreshold(ict, input.Salary) {
+		b.add("intra-company-transfer", MatchLow,
+			"Only if a group company is transferring you from an overseas office to a UK branch.",
+			"Senior or Specialist Worker (ICT) does not lead to indefinite leave to remain (ILR). Time on this route does not count toward settlement.",
+			salaryCompare(ict, input.Salary),
+		)
+	}
+}
+
+func (b *builder) offerUnsure(input Input) {
+	sw := b.bySlug["skilled-worker"]
+	b.add("skilled-worker", salaryMatch(MatchMedium, sw, input.Salary),
+		"You have a UK job offer. Confirm the employer is on the Register of Licensed Sponsors before you rely on Skilled Worker.",
+		salaryCompare(sw, input.Salary),
+	)
+	su := b.bySlug["scale-up"]
+	b.add("scale-up", salaryMatch(MatchLow, su, input.Salary),
+		"Worth a look if the employer is a qualifying high-growth sponsor. Check the sponsor register first.",
+		salaryCompare(su, input.Salary),
+	)
+}
+
+func (b *builder) offerWithoutSponsor(input Input) {
+	b.unsponsored(input, true)
+	sw := b.bySlug["skilled-worker"]
+	b.add("skilled-worker", MatchLow,
+		"Skilled Worker needs a licensed sponsor. This offer does not give you that route unless the employer gets a licence, or you find one who has.",
+		salaryCompare(sw, input.Salary),
+	)
+}
+
+func (b *builder) noOffer(input Input) {
+	b.unsponsored(input, false)
+}
+
+// unsponsored recommends routes that do not need a sponsor.
+// withOffer is true when they have a job the employer will not sponsor.
+func (b *builder) unsponsored(input Input, withOffer bool) {
+	switch input.Background {
+	case "uk_graduate":
+		b.add("graduate", MatchHigh,
+			graduateFit(withOffer),
+		)
+		if !withOffer {
+			sw := b.bySlug["skilled-worker"]
+			b.add("skilled-worker", MatchLow,
+				"To move on from Graduate you need a job offer from a licensed sponsor.",
+				salaryCompare(sw, input.Salary),
+			)
+		}
+	case "top_university":
+		b.add("high-potential-individual", MatchHigh,
+			"Your degree may qualify without a job offer or a sponsor, if the university is on the Home Office list.",
+		)
+		b.add("global-talent", MatchMedium,
+			"If you also have a strong tech or STEM record, Global Talent is the endorsement route and does not need a sponsor.",
+		)
+	case "tech_talent":
+		b.add("global-talent", MatchHigh,
+			"A strong tech or STEM record can be endorsed without a job offer or a sponsor.",
+		)
+		b.add("high-potential-individual", MatchMedium,
+			"Also check the Home Office list if your degree is from a listed university. That route does not need a sponsor.",
+		)
+	default:
+		b.add("global-talent", MatchMedium,
+			"Leaders and emerging talent in tech can apply with an endorsement. No job offer or sponsor is required.",
+		)
+		b.add("high-potential-individual", MatchMedium,
+			"Possible if you graduated from a university on the Home Office list in the last 5 years. No sponsor is required.",
+		)
+		b.add("graduate", MatchLow,
+			"Only if you recently finished a degree at a UK university.",
+		)
+	}
+}
+
+func graduateFit(withOffer bool) string {
+	if withOffer {
+		return "The employer will not sponsor, but a recent UK degree can still let you take the job on the Graduate route. No sponsor or salary floor in our data."
+	}
+	return "You have a UK degree and no sponsored job yet. Graduate lets you work in tech or STEM without a sponsor or a salary floor."
+}
+
+func ilrReadiness(years string) string {
+	span := strconv.Itoa(SkilledWorkerILRYears)
+	switch years {
+	case "under_3":
+		return "You are early on Skilled Worker. This site's timeline counts " + span + " years on this route toward indefinite leave to remain (ILR). Save your visa start date there."
+	case "3_to_5":
+		return "You are in the later part of the " + span + "-year ILR count this site uses for Skilled Worker. Check the date on My timeline."
+	case "5_plus":
+		return "You may already be at the " + span + "-year mark this site uses for Skilled Worker ILR. Check your start date on My timeline, then confirm the settlement rules on gov.uk before you apply."
+	default:
+		return "This site's timeline counts " + span + " years on Skilled Worker toward indefinite leave to remain (ILR). Add your start date there."
+	}
+}
+
+func salaryCompare(r models.VisaRoute, salary int64) string {
 	if r.SalaryThreshold <= 0 {
+		return "Our data has no salary floor for this route."
+	}
+	threshold := r.ThresholdPounds()
+	if salary <= 0 {
+		return "Confirm your salary meets the " + threshold + " general threshold, or the going rate for your job code if that is higher."
+	}
+	if meetsRouteThreshold(r, salary) {
+		return "Your stated salary meets the " + threshold + " general threshold. The going rate for your job code can be higher, so check it on the route page."
+	}
+	return "Your stated salary is below the " + threshold + " general threshold. The going rate for your job code can differ, so check both on the route page."
+}
+
+func salaryMatch(base MatchLevel, r models.VisaRoute, salary int64) MatchLevel {
+	if salary > 0 && r.SalaryThreshold > 0 && !meetsRouteThreshold(r, salary) {
+		return MatchLow
+	}
+	return base
+}
+
+func meetsRouteThreshold(r models.VisaRoute, salary int64) bool {
+	if salary <= 0 || r.SalaryThreshold <= 0 {
 		return true
 	}
 	return salary >= r.SalaryThreshold/100
 }
 
-func thresholdReason(r models.VisaRoute, salary int64) string {
-	if salary == 0 {
-		return "Confirm your salary meets the " + r.ThresholdPounds() + "/yr threshold (or the going rate for your job code)."
-	}
-	if salary >= r.SalaryThreshold/100 {
-		return "Your stated salary meets the general threshold."
-	}
-	return "Verify salary against the going rate for your specific SOC code."
+func cleanDesc(s string) string {
+	return strings.Join(strings.Fields(s), " ")
 }
 
 func dedupeBest(recs []Recommendation) []Recommendation {

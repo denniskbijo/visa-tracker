@@ -3,7 +3,7 @@
 
   var STORAGE_KEY = 'visa-tracker-timeline';
 
-  // --- Wizard ---
+  // --- Quiz ---
   function initWizard() {
     var form = document.getElementById('wizard-form');
     if (!form) return;
@@ -14,29 +14,56 @@
     var submitBtn = document.getElementById('wizard-submit');
     var stepNum = document.getElementById('wizard-step-num');
     var progress = document.getElementById('wizard-progress');
+    var results = document.getElementById('wizard-results');
     var current = 1;
-    var total = steps.length;
+    var total = 4;
+
+    function track() {
+      var checked = form.querySelector('input[name="on_skilled_worker"]:checked');
+      return checked ? checked.value : '';
+    }
+
+    function syncSalaryCopy(active) {
+      form.querySelectorAll('[data-salary-copy]').forEach(function (el) {
+        el.classList.toggle('hidden', !active || el.getAttribute('data-salary-copy') !== active);
+      });
+    }
 
     function showStep(n) {
       current = n;
+      var active = track();
+      syncSalaryCopy(active);
       steps.forEach(function (step) {
-        step.classList.toggle('hidden', parseInt(step.dataset.step, 10) !== n);
+        var stepN = parseInt(step.dataset.step, 10);
+        var stepTrack = step.dataset.track || '';
+        var onTrack = stepTrack === '' || stepTrack === active;
+        var visible = stepN === n && onTrack;
+        step.classList.toggle('hidden', !visible);
+        step.querySelectorAll('input, select, textarea').forEach(function (input) {
+          input.disabled = !onTrack;
+        });
       });
       if (stepNum) stepNum.textContent = String(n);
       if (progress) progress.style.width = ((n / total) * 100) + '%';
       if (prevBtn) prevBtn.classList.toggle('hidden', n === 1);
       if (nextBtn) nextBtn.classList.toggle('hidden', n === total);
       if (submitBtn) submitBtn.classList.toggle('hidden', n !== total);
+      if (results && n < total) results.innerHTML = '';
     }
 
     function stepValid(n) {
-      var step = form.querySelector('.wizard-step[data-step="' + n + '"]');
-      if (!step) return true;
-      var radios = step.querySelectorAll('input[type="radio"]');
-      if (radios.length > 0) {
-        return Array.prototype.some.call(radios, function (r) { return r.checked; });
-      }
-      return true;
+      var active = track();
+      var valid = true;
+      steps.forEach(function (step) {
+        if (parseInt(step.dataset.step, 10) !== n) return;
+        var stepTrack = step.dataset.track || '';
+        if (stepTrack !== '' && stepTrack !== active) return;
+        var radios = step.querySelectorAll('input[type="radio"]');
+        if (radios.length === 0) return;
+        var checked = Array.prototype.some.call(radios, function (r) { return r.checked; });
+        if (!checked) valid = false;
+      });
+      return valid;
     }
 
     if (nextBtn) {
@@ -54,6 +81,14 @@
         if (current > 1) showStep(current - 1);
       });
     }
+
+    form.addEventListener('submit', function (e) {
+      if (current !== total || !stepValid(current)) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!stepValid(current)) alert('Please select an option to continue.');
+      }
+    }, true);
 
     showStep(1);
   }

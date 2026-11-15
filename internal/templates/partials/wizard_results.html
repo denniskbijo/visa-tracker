@@ -2,10 +2,10 @@
 {{if .Recommendations}}
 <div class="card" style="margin-top:16px">
   <div class="card-header">
-    <div class="card-title">Recommended routes</div>
-    <div class="card-badge">{{len .Recommendations}} matches</div>
+    <div class="card-title">{{if eq .Input.OnSkilledWorker "yes"}}Your next steps{{else}}Routes that may fit{{end}}</div>
+    <div class="card-badge">{{len .Recommendations}} {{if eq (len .Recommendations) 1}}match{{else}}matches{{end}}</div>
   </div>
-  <p class="chart-caption">These are suggestions based on your answers. Always verify eligibility on gov.uk before applying.</p>
+  <p class="chart-caption">Suggestions from your answers and the visa data on this site. Check the rules on gov.uk before you apply.</p>
   <div class="detail-grid">
     {{range .Recommendations}}
     <div class="detail-item rec-item rec-{{.Match}}">
@@ -13,7 +13,11 @@
         <div class="di-label">{{.Route.Name}}</div>
         <span class="tag {{if eq .Match "high"}}tag-green{{else if eq .Match "medium"}}tag-blue{{else}}tag{{end}}">{{.Match}} match</span>
       </div>
-      <div class="di-value green">{{.Route.ThresholdPounds}} / yr{{if eq .Route.ThresholdPounds "None"}} minimum{{end}}</div>
+      {{if eq .Route.ThresholdPounds "None"}}
+      <div class="di-value green">No salary floor</div>
+      {{else}}
+      <div class="di-value green">{{.Route.ThresholdPounds}} / yr</div>
+      {{end}}
       <ul class="rec-reasons">
         {{range .Reasons}}
         <li>{{.}}</li>
@@ -24,8 +28,13 @@
     {{end}}
   </div>
   <div class="wizard-actions-secondary">
-    <a href="/sponsors" class="btn-outline btn-sm">Search sponsors</a>
+    {{if eq .Input.OnSkilledWorker "yes"}}
     <a href="/timeline" class="btn-outline btn-sm">Track my timeline</a>
+    <a href="/visas/skilled-worker" class="btn-outline btn-sm">Check salary threshold</a>
+    {{else}}
+    <a href="/sponsors" class="btn-outline btn-sm">Search sponsors</a>
+    <a href="/visas" class="btn-outline btn-sm">Compare routes</a>
+    {{end}}
   </div>
 </div>
 {{else}}
