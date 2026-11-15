@@ -12,7 +12,7 @@ var posts = []Post{
 		Slug:    "ict-threshold-52500",
 		Title:   "The ICT floor is £52,500. This site still said £48,500.",
 		Date:    "2026-11-15",
-		Summary: "Senior or Specialist Worker moved from £48,500 to £52,500 on 22 July 2025. The monthly gov.uk check caught the old figure, and the freshness date had gone stale.",
+		Summary: "The ICT floor has been £52,500 since 22 July 2025. This site was still showing £48,500.",
 		// Source: internal/blog/ict-threshold-52500.md
 	},
 	{
