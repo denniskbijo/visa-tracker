@@ -4,7 +4,7 @@
 # last_checked. If any marker is missing it opens an issue and leaves
 # last_checked alone. `make check-sources` still fails when last_checked
 # is older than max_age_days.
-last_checked: "2026-09-12"
+last_checked: "2026-11-15"
 max_age_days: 45
 
 sources:
@@ -26,8 +26,8 @@ sources:
       - "Biological scientists"
       - "Graphic and multimedia designers"
 
-  # Senior or Specialist Worker general threshold (SNR 8.1), £48,500 in the seed.
+  # Senior or Specialist Worker general threshold (SNR 8.1).
   - id: appendix-global-business-mobility
     url: https://www.gov.uk/guidance/immigration-rules/immigration-rules-appendix-global-business-mobility-routes
     must_contain:
-      - "48,500"
+      - "52,500"

@@ -47,11 +47,11 @@ visa_routes:
     name: Senior or Specialist Worker (ICT)
     description: >
       For multinational companies transferring established employees to a UK branch.
-      Requires sponsor and a minimum salary of £48,500/yr, or the going rate if higher.
+      Requires sponsor and a minimum salary of £52,500/yr, or the going rate if higher.
       Previously called Intra-Company Transfer.
     requires_sponsor: true
     requires_endorsement: false
-    salary_threshold_pence: 4850000   # £48,500/yr
+    salary_threshold_pence: 5250000   # £52,500/yr (from 22 July 2025)
     duration_years: 5
 
   - slug: graduate
@@ -137,6 +137,12 @@ thresholds:
     amount_pence: 4850000
     effective_date: "2025-07-22"
     notes: "Senior or Specialist Worker threshold raised from £48,200 to £48,500"
+
+  - visa_route_slug: intra-company-transfer
+    soc_code: ""
+    amount_pence: 5250000
+    effective_date: "2025-07-22"
+    notes: "Senior or Specialist Worker general threshold raised from £48,500 to £52,500"
 
 processing_times:
   - visa_route_slug: skilled-worker
