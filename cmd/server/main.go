@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -20,7 +21,21 @@ func main() {
 	migrateOnly := flag.Bool("migrate", false, "run migrations and exit")
 	ingestOnly := flag.Bool("ingest", false, "run data ingestion and exit")
 	checkSources := flag.Bool("check-sources", false, "fetch gov.uk appendices and verify seed markers")
+	reportSources := flag.Bool("report-sources", false, "compare gov.uk markers and print match or mismatch (exit 2); a stale last_checked is reported and is not an error")
 	flag.Parse()
+
+	if *reportSources {
+		cfg := config.Load()
+		report, err := ingest.CompareGovSources(cfg.DataDir)
+		if err != nil {
+			log.Fatalf("source check failed: %v", err)
+		}
+		fmt.Print(report.Format())
+		if !report.Match() {
+			os.Exit(2)
+		}
+		return
+	}
 
 	if *checkSources {
 		cfg := config.Load()

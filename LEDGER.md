@@ -22,7 +22,7 @@ Source for figures: gov.uk Immigration Rules (Appendix Skilled Worker, Appendix 
 
 ## Data and automation
 
-- [x] Monthly gov.uk source check (`make check-sources`, GitHub Actions on the 1st)
+- [x] Monthly gov.uk source check (`make check-sources`, GitHub Actions on the 1st: pull request when markers match, issue when they do not)
 - [ ] Processing times: refresh beyond the March 2025 YAML snapshot (scraper or manual)
 - [ ] Policy-change banner when seed thresholds or rules change after ingest
 - [ ] Richer sponsor results: explain ratings, link to gov.uk, suggest next steps

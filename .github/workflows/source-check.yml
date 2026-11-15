@@ -1,21 +1,161 @@
 name: Monthly gov.uk source check
 
+# Schedule and manual dispatch only. This file does not run on push or
+# pull_request, and the pull request or issue below is opened with the
+# default GITHUB_TOKEN. Events from that token do not start a new run,
+# so a bot pull request cannot loop this workflow. The branch it pushes
+# is never main.
+
 on:
   schedule:
     - cron: "0 8 1 * *"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   check-sources:
-    name: Verify seed markers still appear on gov.uk
+    name: Compare seed markers with gov.uk
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ${{ github.workspace }}
+    outputs:
+      status: ${{ steps.compare.outputs.status }}
+      stale: ${{ steps.compare.outputs.stale }}
+      summary: ${{ steps.compare.outputs.summary }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-      - name: Check official appendices
-        run: go run ./cmd/server -check-sources
+      - name: Compare official appendices
+        id: compare
+        run: |
+          # Run the binary, not `go run`. `go run` turns a program exit 2 into exit 1,
+          # which would hide a marker mismatch.
+          go build -o "$RUNNER_TEMP/visa-tracker" ./cmd/server
+          set +e
+          "$RUNNER_TEMP/visa-tracker" -report-sources > "$RUNNER_TEMP/source-report.txt"
+          code=$?
+          set -e
+          cat "$RUNNER_TEMP/source-report.txt"
+          if [ "$code" -eq 0 ]; then
+            echo "status=match" >> "$GITHUB_OUTPUT"
+          elif [ "$code" -eq 2 ]; then
+            echo "status=mismatch" >> "$GITHUB_OUTPUT"
+          else
+            echo "status=error" >> "$GITHUB_OUTPUT"
+            exit "$code"
+          fi
+          if grep -qx 'stale: true' "$RUNNER_TEMP/source-report.txt"; then
+            echo "stale=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "stale=false" >> "$GITHUB_OUTPUT"
+          fi
+          {
+            echo "summary<<SOURCE_REPORT"
+            cat "$RUNNER_TEMP/source-report.txt"
+            echo "SOURCE_REPORT"
+          } >> "$GITHUB_OUTPUT"
+
+  follow-up:
+    name: Open a pull request or an issue
+    needs: check-sources
+    if: github.event_name == 'schedule' && needs.check-sources.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bump last_checked and open a pull request
+        if: needs.check-sources.outputs.status == 'match'
+        env:
+          REPORT: ${{ needs.check-sources.outputs.summary }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TODAY=$(date -u +%Y-%m-%d)
+          BRANCH="source-check/last-checked-${TODAY}"
+          if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ]; then
+            echo "refusing to push ${BRANCH}" >&2
+            exit 1
+          fi
+          existing=$(gh pr list --head "$BRANCH" --base main --state open --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            echo "Pull request #${existing} is already open for ${BRANCH}"
+            exit 0
+          fi
+          sed -i -E "s/^(last_checked:)[[:space:]]*\"[0-9]{4}-[0-9]{2}-[0-9]{2}\"/\1 \"${TODAY}\"/" data/source_check.yaml
+          if ! grep -qx "last_checked: \"${TODAY}\"" data/source_check.yaml; then
+            echo "failed to bump last_checked" >&2
+            exit 1
+          fi
+          if git diff --quiet -- data/source_check.yaml; then
+            echo "last_checked is already ${TODAY}"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$BRANCH"
+          git add data/source_check.yaml
+          git commit -m "Bump gov.uk source check date to ${TODAY}."
+          git push -u origin "$BRANCH"
+          cat > "$RUNNER_TEMP/pr.md" <<EOF
+          The monthly gov.uk source check on ${TODAY} found every marker in \`data/source_check.yaml\` still present on the live appendices.
+
+          This pull request bumps \`last_checked\` to ${TODAY}. It does not change salary or SOC figures. Please review the appendices before merging. A merge to \`main\` deploys the site.
+
+          \`\`\`
+          ${REPORT}
+          \`\`\`
+          EOF
+          gh pr create --base main --head "$BRANCH" --title "Bump gov.uk source check date to ${TODAY}" --body-file "$RUNNER_TEMP/pr.md"
+
+      - name: Open an issue when markers differ
+        if: needs.check-sources.outputs.status == 'mismatch'
+        env:
+          REPORT: ${{ needs.check-sources.outputs.summary }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TODAY=$(date -u +%Y-%m-%d)
+          TITLE="gov.uk figures differ from the visa-tracker seed"
+          cat > "$RUNNER_TEMP/issue.md" <<EOF
+          The monthly gov.uk source check on ${TODAY} found markers in \`data/source_check.yaml\` that no longer appear on the live appendices.
+
+          \`last_checked\` was not changed. Update \`data/*.yaml\` if the rules moved, update the markers to match, then bump \`last_checked\`.
+
+          \`\`\`
+          ${REPORT}
+          \`\`\`
+          EOF
+          existing=$(gh issue list --state open --limit 50 --json number,title --jq "[.[] | select(.title == \"${TITLE}\")][0].number // empty")
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body-file "$RUNNER_TEMP/issue.md"
+          else
+            gh issue create --title "$TITLE" --body-file "$RUNNER_TEMP/issue.md"
+          fi
+
+  enforce-staleness:
+    name: Fail a manual run when last_checked is stale
+    needs: check-sources
+    if: github.event_name != 'schedule' && needs.check-sources.result == 'success' && needs.check-sources.outputs.status == 'match' && needs.check-sources.outputs.stale == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Stale last_checked
+        run: |
+          echo "last_checked is older than max_age_days. Re-read gov.uk and bump last_checked in data/source_check.yaml."
+          exit 1
+
+  fail-on-mismatch:
+    name: Fail when gov.uk markers differ
+    needs: [check-sources, follow-up]
+    if: always() && needs.check-sources.outputs.status == 'mismatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Markers differ
+        run: |
+          echo "gov.uk pages no longer match the seed markers."
+          exit 1
